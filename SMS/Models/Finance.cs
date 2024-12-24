@@ -1,6 +1,6 @@
 
 
-using Users;
+using UsersModel;
 
 namespace FinanceModel
 {

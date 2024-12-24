@@ -1,6 +1,6 @@
-
-
 using RolePermissionModel;
+using UsersModel;
+
 
 namespace RoleModel
 {
@@ -10,7 +10,8 @@ namespace RoleModel
     public required string RoleName { get; set; }
 
     // Navigation property for many-to-many relationship
-    public required ICollection<RolePermission> RolePermissions { get; set; }
+    public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
+    public User? User { get; set; }
 }
 
 }

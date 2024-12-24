@@ -1,5 +1,5 @@
 
-using Users;
+using UsersModel;
 
 namespace StudentModel
 {

@@ -9,7 +9,7 @@ namespace PermissionModel
     public required string PermissionName { get; set; }
 
     // Navigation property for many-to-many relationship
-    public ICollection<RolePermission>? RolePermissions { get; set; }
+    public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }
 
 
