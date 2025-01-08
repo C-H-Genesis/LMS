@@ -13,9 +13,11 @@ using RoleModel;
 using StudentModel;
 using UsersModel;
 using TeacherModel;
+using UserRoles;
 using ApplicationDbContext;
 using LoginDTO;
 using RegisterDTO;
+using CourseModel;
 
 
 namespace AuthController
@@ -42,6 +44,12 @@ public class AuthController : ControllerBase
             return BadRequest("Username already exists.");
         }
 
+        var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == request.Role);
+        if (role == null)
+        {
+            return BadRequest("Invalid role specified.");
+        }
+
         // Hash the password
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
@@ -64,11 +72,14 @@ public class AuthController : ControllerBase
             case "Student":
                 var student = new Student
                 {
-                    StudentId = Guid.NewGuid(),
                     UserId = user.UserId,
+                    FullName = request.FullName,
                     EnrollmentDate = DateTime.UtcNow,
+                    User = user
+                    
                 };
                 _context.Students.Add(student);
+                await _context.SaveChangesAsync();
                 break;
 
             case "Admin":
@@ -76,6 +87,7 @@ public class AuthController : ControllerBase
                 {
                     AdminId = Guid.NewGuid(),
                     UserId = user.UserId,
+                    FullName = request.FullName
                 };
                 _context.Admin.Add(admin);
                 break;
@@ -85,6 +97,7 @@ public class AuthController : ControllerBase
                 {
                     FinanceId = Guid.NewGuid(),
                     UserId = user.UserId,
+                    FullName = request.FullName
                 };
                 _context.Finance.Add(finance);
                 break;
@@ -94,6 +107,8 @@ public class AuthController : ControllerBase
                 {
                     TeacherId = Guid.NewGuid(),
                     UserId = user.UserId,
+                    TeacherName = request.FullName,
+                    Courses = new List<Course>()
                 };
                 _context.Teacher.Add(teacher);
                 break;
@@ -102,10 +117,17 @@ public class AuthController : ControllerBase
                 return BadRequest("Invalid role specified.");
         }
 
-        _context.SaveChanges();
+        var userRole = new UserRole
+        {
+            UserId = user.UserId,
+            RoleId = role.RoleId
+        };
+          _context.UserRoles.Add(userRole);
+          
+        await _context.SaveChangesAsync();
 
         return Ok("Registration successful.");
-    }
+    } 
 
     // Login Method (Already implemented)
     [HttpPost("login")]

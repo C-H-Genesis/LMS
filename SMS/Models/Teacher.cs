@@ -1,4 +1,5 @@
 
+using CourseModel;
 using UsersModel;
 
 namespace TeacherModel
@@ -7,13 +8,14 @@ namespace TeacherModel
 {
     public Guid TeacherId { get; set; } = Guid.NewGuid();
     public Guid UserId { get; set; }
-    public string FullName { get; set; } = string.Empty;
+    public required string TeacherName { get; set; } 
     public string? Department { get; set; }
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
 
     // Navigation Property
     public User? User { get; set; }
+    public required ICollection<Course> Courses { get; set; } 
 }
 
 }

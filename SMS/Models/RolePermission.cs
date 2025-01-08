@@ -9,8 +9,8 @@ namespace RolePermissionModel
     public int PermissionId { get; set; }
     
     // Navigation properties to Role and Permission
-    public Role Role { get; set; }
-    public Permission Permission { get; set; }
+    public Role? Role { get; set; }
+    public Permission? Permission { get; set; }
 }
 
 

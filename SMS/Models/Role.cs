@@ -1,6 +1,6 @@
 using RolePermissionModel;
 using UsersModel;
-
+using UserRoles;
 
 namespace RoleModel
 {
@@ -11,7 +11,8 @@ namespace RoleModel
 
     // Navigation property for many-to-many relationship
     public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
-    public User? User { get; set; }
+    public required ICollection<User> Users { get; set; } = new List<User>();
+    
 }
 
 }
