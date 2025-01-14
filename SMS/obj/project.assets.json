@@ -6561,11 +6561,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\SMS&LMS\\sms\\SMS.csproj",
+      "projectUniqueName": "D:\\SMS&LMS\\SMS\\SMS.csproj",
       "projectName": "SMS",
-      "projectPath": "D:\\SMS&LMS\\sms\\SMS.csproj",
+      "projectPath": "D:\\SMS&LMS\\SMS\\SMS.csproj",
       "packagesPath": "C:\\Users\\Haston\\.nuget\\packages\\",
-      "outputPath": "D:\\SMS&LMS\\sms\\obj\\",
+      "outputPath": "D:\\SMS&LMS\\SMS\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Haston\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -18,6 +18,7 @@ using ApplicationDbContext;
 using LoginDTO;
 using RegisterDTO;
 using CourseModel;
+using System.Linq;
 
 
 namespace AuthController
@@ -124,9 +125,23 @@ public class AuthController : ControllerBase
         };
           _context.UserRoles.Add(userRole);
           
-        await _context.SaveChangesAsync();
+          var save = await _context.SaveChangesAsync();
 
-        return Ok("Registration successful.");
+          if (save > 0)
+          {
+            return Ok(new { message = "Registration successful." });
+
+          }
+          else
+          {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails
+            {
+                Title = "Registration failed.",
+                Detail = "An unexpected error occurred while saving user details.",
+                
+            });
+          } 
+          
     } 
 
     // Login Method (Already implemented)
@@ -146,8 +161,9 @@ public class AuthController : ControllerBase
         {
             return Unauthorized("Invalid username or password.");
         }
-
+        
         var token = GenerateToken(user);
+
         return Ok(new { Token = token});
     }
 

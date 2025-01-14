@@ -1,0 +1,29 @@
+<div class="register-container">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" autocomplete="on">
+      <h2>Register</h2>
+      <div>
+        <label for="fullName">Full Name</label>
+        <input id="fullName" formControlName="fullName" type="text" required />
+      </div><br>
+      <div>
+        <label for="username">Username</label>
+        <input id="username" formControlName="username" type="text" required />
+      </div><br>
+      <div>
+        <label for="password">Password</label>
+        <input id="password" formControlName="password" type="password" required />
+      </div><br>
+      <div>
+        <label for="role">Role</label>
+        <select id="role" formControlName="role">
+          <option value="Student">Student</option>
+          <option value="Admin">Admin</option>
+          <option value="Finance">Finance</option>
+          <option value="Teacher">Teacher</option>
+        </select>
+      </div><br>
+      <button type="submit">Register</button>
+      <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+      <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+    </form>
+  </div>

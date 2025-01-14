@@ -1,0 +1,69 @@
+<nav>
+  <ul>
+    <!-- Navbar for Student role -->
+    <li *ngIf="userRole === 'Student'">
+      <a routerLink="/student-dashboard">Home</a>
+    </li>
+    <li *ngIf="userRole === 'Student'">
+      <a routerLink="/fees">Fees</a>
+    </li>
+    <li *ngIf="userRole === 'Student'">
+      <a routerLink="/course-registration">Course Registration</a>
+    </li>
+    <li *ngIf="userRole === 'Student'">
+      <a routerLink="/grades">Grades</a>
+    </li>
+    <li *ngIf="userRole === 'Student'">
+      <a routerLink="/profile">Profile</a>
+    </li>
+
+    <!-- Navbar for Teacher role -->
+    <li *ngIf="userRole === 'Teacher'">
+      <a routerLink="/teacher-dashboard">Home</a>
+    </li>
+    <li *ngIf="userRole === 'Teacher'">
+      <a routerLink="/my-courses">My Courses</a>
+    </li>
+    <li *ngIf="userRole === 'Teacher'">
+      <a routerLink="/assignments">Assignments</a>
+    </li>
+    <li *ngIf="userRole === 'Teacher'">
+      <a routerLink="/profile">Profile</a>
+    </li>
+
+    <!-- Navbar for Admin role -->
+    <li *ngIf="userRole === 'Admin'">
+      <a routerLink="/admin-dashboard">Dashboard</a>
+    </li>
+    <li *ngIf="userRole === 'Admin'">
+      <a routerLink="/manage-users">Manage Users</a>
+    </li>
+    <li *ngIf="userRole === 'Admin'">
+      <a routerLink="/courses">Manage Courses</a>
+    </li>
+    <li *ngIf="userRole === 'Admin'">
+      <a routerLink="/reports">Reports</a>
+    </li>
+
+
+    <!-- Navbar for Finance role -->
+    <li *ngIf="userRole === 'Finance'">
+      <a routerLink="/finance-dashboard">Home</a>
+    </li>
+
+    <li *ngIf="userRole === 'Teacher'">
+      <a routerLink="/profile">Profile</a>
+    </li>
+
+    <!-- Common logout button -->
+    <li>
+      <button (click)="logout()">Logout</button>
+    </li>
+  </ul>
+</nav>
+
+
+
+
+
+
