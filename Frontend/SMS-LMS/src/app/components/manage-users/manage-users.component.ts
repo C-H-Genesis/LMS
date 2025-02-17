@@ -1,10 +1,88 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AdminService } from '../../services/admin.service';
+import { catchError, of } from 'rxjs';
+import { ok } from 'assert';
+import { Router } from '@angular/router';
+import { Console, error, log } from 'console';
 
 @Component({
   selector: 'app-manage-users',
   templateUrl: './manage-users.component.html',
   styleUrl: './manage-users.component.css'
 })
-export class ManageUsersComponent {
+export class ManageUsersComponent implements OnInit {
+  users: any[] = [];
+  isCreatingUser: boolean = false; // Controls form visibility
+  user = {
+    userId : '', 
+    fullName: '',
+    username: '',
+    password: '',
+    role: '',
+    usertype: '',
+  };
+  selectedrole : string = '';
+  roles: string[] = ['Admin', 'Student', 'Teacher', 'Finance'];
 
+  constructor(private adminService: AdminService, private router: Router) {}
+
+  ngOnInit() {
+    this.loadUsers();
+  }
+
+  loadUsers() {
+    this.adminService.getAllUsers().subscribe((data: any) => {
+      this.users = data;
+    });
+  }
+
+  loadUsersByRole() {
+    if (!this.selectedrole) {
+      // If no role is selected, fetch all users
+      this.adminService.getAllUsers().subscribe((data: any) => {
+        this.users = data || [];
+      });
+    } else {
+      // Fetch users based on selected role
+      this.adminService.getAllUsersByRole(this.selectedrole).subscribe((data: any) => {
+        this.users = data || [];
+      });
+    }
+  }
+
+  onSubmit() {
+    this.adminService.createUser(this.user).subscribe(() => {
+      alert('User created successfully!');
+      this.router.navigate(['/manage-users']);
+      this.isCreatingUser = false; // Hide the form
+      this.loadUsers(); // Reload the list
+          
+    }, 
+    (error) => {
+      alert("Failed to create User");
+      console.log(error);
+      
+    });
+  }
+
+  onDeleteUser(userId: string) {
+
+    if (confirm('Are you sure you want to delete this user?')) {
+      this.adminService.deleteUser(userId)
+        .pipe(
+          catchError((error) => {
+            console.error('Error deleting user:', error);
+            alert('Failed to delete the user.');
+            return of(null);
+          })
+        )
+        .subscribe((response) => {
+          if (response) {
+            alert('User deleted successfully!');
+            this.users = this.users.filter((user) => user.userId !== userId); // Update the list locally
+            this.router.navigate(['/manage-users']);
+          }
+        });
+    }
+  }
 }

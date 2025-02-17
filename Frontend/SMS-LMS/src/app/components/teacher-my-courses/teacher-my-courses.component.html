@@ -1,1 +1,72 @@
-<p>teacher-my-courses works!</p>
+<div class="teacher-dashboard">
+  <!-- Sidebar with Courses Table -->
+  <div class="sidebar">
+    <h3>My Courses</h3>
+    <div *ngIf="loadingCourses">Loading courses...</div>
+
+    <table *ngIf="!loadingCourses && courses.length > 0" class="courses-table">
+      <thead>
+        <tr>
+          <th>Course Name</th>
+          <th>Course Code</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let course of courses"
+          (click)="selectCourse(course.courseCode)"
+          [class.selected]="course.courseCode === selectedCourseCode"
+        >
+          <td>{{ course.courseName }}</td>
+          <td>{{ course.courseCode }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loadingCourses && courses.length === 0">
+      No courses found.
+    </div>
+  </div>
+
+  <!-- Main Section: Table for Students -->
+  <div class="main-content">
+    <h3>Attendance</h3>
+    
+    <!-- Input for Course Code -->
+    <div class="course-code-input">
+      <label for="courseCode">Enter Course Code:</label>
+      <input
+        id="courseCode"
+        type="text"
+        [(ngModel)]="enteredCourseCode"
+        placeholder="Enter course code"
+      />
+      <button (click)="fetchStudents()">View Students</button>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div *ngIf="loadingStudents">Loading students...</div>
+  
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  
+    <!-- Students Table -->
+    <table *ngIf="!loadingStudents && students.length > 0" class="students-table">
+      <thead>
+        <tr>
+          <th>Reg. Number</th>
+          <th>Full Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of students">
+          <td>{{ student.regNumber }}</td>
+          <td>{{ student.fullName }}</td>
+        </tr>
+      </tbody>
+    </table>
+  
+  </div>
+  

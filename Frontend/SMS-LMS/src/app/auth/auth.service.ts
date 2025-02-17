@@ -5,6 +5,7 @@ import { environment } from "../environments/environment";
 import { RegisterRequest } from '../DTOs/RegisterRequest';
 import { LoginRequest } from "../DTOs/LoginRequest";
 import { jwtDecode } from "jwt-decode";
+import { Router } from '@angular/router';
 
 
 
@@ -14,7 +15,7 @@ import { jwtDecode } from "jwt-decode";
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/api/auth`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   // Register method
   register(userData: RegisterRequest): Observable<any> {
@@ -32,9 +33,13 @@ export class AuthService {
   }
 
   // Retrieve token from localStorage
-  getToken(): string | null {
+ getToken(): string | null {
+  if (typeof window !== 'undefined' && localStorage) {
     return localStorage.getItem('authToken');
   }
+  return null;
+}
+
 
    // Decode token to get role
    getRole(): string | null {
@@ -42,7 +47,6 @@ export class AuthService {
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
-        console.log('Decoded token:', decoded);
         return decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null; // Assuming the token has a 'role' field
       } catch (err) {
         console.error('Error decoding token', err);
@@ -56,5 +60,6 @@ export class AuthService {
   // Logout method
   logout(): void {
     localStorage.removeItem('authToken');
+    this.router.navigate(['/login']);
   }
 }

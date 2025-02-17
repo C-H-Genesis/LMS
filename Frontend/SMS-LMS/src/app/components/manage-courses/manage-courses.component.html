@@ -1,1 +1,56 @@
-<p>manage-courses works!</p>
+<div class="container">
+    <h1>Courses</h1>
+  
+    <!-- Display error message if any -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  
+    <!-- Course list in table format -->
+    <div *ngIf="courses.length > 0">
+      <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th>#</th>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Teacher Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let course of courses; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ course.courseCode }}</td>
+            <td>{{ course.courseName }}</td>
+            <td>{{ course.teacherName }}</td>
+            <td>
+              <button (click)="deleteCourse(course.id)" class="btn btn-danger btn-sm">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div *ngIf="courses.length === 0" class="alert alert-info">No courses available.</div>
+  
+  
+    <!-- Add new course form -->
+    <h3>Add New Course</h3>
+    <form (ngSubmit)="addCourse()">
+      <div class="form-group">
+        <label for="courseCode">Course Code</label>
+        <input id="courseCode" [(ngModel)]="newCourse.courseCode" name="courseCode" type="text" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label for="courseName">Course Name</label>
+        <input id="courseName" [(ngModel)]="newCourse.courseName" name="courseName" type="text" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label for="teacherName">Teacher Name</label>
+        <input id="teacherName" [(ngModel)]="newCourse.teacherName" name="teacherName" type="text" class="form-control" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Add Course</button>
+    </form>
+  </div>
+  

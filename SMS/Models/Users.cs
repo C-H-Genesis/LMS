@@ -1,26 +1,24 @@
-using AdminModel;
-using FinanceModel;
 using RoleModel;
-using StudentModel;
-using TeacherModel;
-using UserRoles;
 using EnrollmentModel;
 
 namespace UsersModel{
     public class User
 {
     public Guid UserId { get; set; } = Guid.NewGuid();
+    public required string FullName { get; set; }
     public required string Username { get; set; } 
     public required string PasswordHash { get; set; }
-    public required string Role { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public Guid RoleId { get; set; }
+    public string? Email { get; set; }
+    public string? PhoneNumber { get; set; }
+    public string? UserType { get; set; }
+    
 
     // Navigation Properties
-    public Student? Student { get; set; }
-    public ICollection<Admin>? Admins { get; set; }
-    public ICollection<Finance>? Finances { get; set; }
-    public ICollection<Teacher>? Teachers { get; set; }
-    public ICollection<Enrollment>? Enrollments { get; set; }
+    
+    public Role? Role { get; set; }
+    public ICollection<Enrollment>? Enrollments { get; set; }  = new List<Enrollment>();
+    
 }
 
 }

@@ -1,21 +1,15 @@
 
+using System.ComponentModel.DataAnnotations.Schema;
 using CourseModel;
 using UsersModel;
 
 namespace TeacherModel
 {
-    public class Teacher
+    public class Teacher : User
 {
-    public Guid TeacherId { get; set; } = Guid.NewGuid();
-    public Guid UserId { get; set; }
-    public required string TeacherName { get; set; } 
+    [Column("Department")]
     public string? Department { get; set; }
-    public string? Email { get; set; }
-    public string? PhoneNumber { get; set; }
-
-    // Navigation Property
-    public User? User { get; set; }
-    public required ICollection<Course> Courses { get; set; } 
+     
 }
 
 }

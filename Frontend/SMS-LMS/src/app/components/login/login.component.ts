@@ -33,33 +33,27 @@ export class LoginComponent implements OnInit {
         (response: any) => {
           // Save the token
           this.authService.saveToken(response.token);
-          console.log('Token saved:', response.token);
   
           // Get the role from the token
           const role = this.authService.getRole();
-          console.log('Extracted role:', role);
   
           // Navigate based on role
           switch (role) {
             case 'Admin':
               this.router.navigate(['/admin-dashboard']);
-              console.log('Navigated to Admin dashboard');
               break;
             case 'Teacher':
               this.router.navigate(['/teacher-dashboard']);
-              console.log('Navigated to Teacher dashboard');
               break;
             case 'Student':
               this.router.navigate(['/student-dashboard']);
-              console.log('Navigated to Student dashboard');
               break;
             case 'Finance':
               this.router.navigate(['/finance-dashboard']);
-              console.log('Navigated to Finance dashboard');
               break;
             default:
               this.router.navigate(['/login']);
-              console.log('Role not recognized. Navigation failed.');
+             alert('Role not recognized. Navigation failed.');
           }
         },
         (error: any) => {

@@ -1,0 +1,51 @@
+.container {
+  top: 70%;
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Table styling */
+.table {
+  width: 100%;
+  font-size: 14px;
+}
+
+.thead-dark {
+  background-color: #343a40;
+  color: white;
+}
+
+th, td {
+  text-align: center;
+  padding: 8px;
+}
+
+/* Form styling */
+.form-group {
+  margin-bottom: 12px;
+}
+
+input {
+  width: 100%;
+  padding: 6px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+/* Alerts */
+.alert {
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 4px;
+}

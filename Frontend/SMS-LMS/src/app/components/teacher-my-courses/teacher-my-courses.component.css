@@ -1,0 +1,49 @@
+.teacher-dashboard {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .sidebar {
+    width: 35%;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-right: 1px solid #ddd;
+  }
+  
+  .main-content {
+    flex-grow: 1;
+    padding: 1rem;
+  }
+  
+  .courses-table,
+  .students-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .courses-table th,
+  .students-table th,
+  .courses-table td,
+  .students-table td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: left;
+  }
+  
+  .courses-table th,
+  .students-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .courses-table tr:hover,
+  .students-table tr:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
+  
+  .selected {
+    background-color: #007bff;
+    color: white;
+  }
+  

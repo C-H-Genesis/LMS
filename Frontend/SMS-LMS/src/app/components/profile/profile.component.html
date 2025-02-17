@@ -1,1 +1,25 @@
-<p>profile works!</p>
+<div>
+  <h2>Profile</h2>
+  <!-- Ensure form is displayed only after profile data is available -->
+  <form *ngIf="profile" (ngSubmit)="updateProfile()">
+    <label>Full Name:</label>
+    <input [(ngModel)]="profile.fullName" name="fullName" required /><br>
+
+    <label>Username:</label>
+    <input [(ngModel)]="profile.username" name="username" required /><br>
+
+    <label>Reg Number:</label>
+    <input [(ngModel)]="profile.regNumber" name="regNumber" required /><br>
+
+    <label>Email:</label>
+    <input [(ngModel)]="profile.email" name="email" required /><br>
+
+    <label>Phone Number:</label>
+    <input [(ngModel)]="profile.phoneNumber" name="phoneNumber" required /><br>
+
+    <button type="submit">Update Profile</button>
+  </form>
+
+  <!-- Show a loading message while data is being fetched -->
+  <p *ngIf="!profile">Loading profile data...</p>
+</div>

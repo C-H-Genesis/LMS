@@ -10,7 +10,10 @@ using System.Security.Claims;
 using UpdateProfile;
 using RegisterNewCourse;
 using EnrollmentModel;
-using CourseModel; 
+using CourseModel;
+using StudentModel;
+using SubmissionModel;
+using SubmissionDTO;
 
 namespace StudentController
 {
@@ -27,114 +30,117 @@ namespace StudentController
         }
 
         // Get current student's profile information
-       [HttpGet("profile")]
-        public async Task<IActionResult> GetProfile()
+ [HttpGet("profile")]
+public async Task<IActionResult> GetProfile()
+{
+    var userId = User.Claims
+        .FirstOrDefault(c => c.Type == "UserId")?.Value;
+
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized("User is not authenticated.");
+    }
+
+    // Fetch the user (which could be a Student, Teacher, etc.)
+    var user = await _context.Users
+        .FirstOrDefaultAsync(u => u.UserId.ToString() == userId);
+
+    if (user == null)
+    {
+        return NotFound("User not found.");
+    }
+
+    // Check if user is a student and access RegNumber
+    if (user is Student student)
+    {
+        var userInfo = new
         {
-            var userId = User.Claims
-                .FirstOrDefault(c => c.Type == "UserId")?.Value;
+            FullName = user.FullName,
+            Username = user.Username,
+            RegNumber = student.RegNumber, // Access RegNumber from the Student class
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber
+        };
 
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User is not authenticated.");
-            }
+        return Ok(userInfo);
+    }
 
-            // Fetch both user and student profile information from the database
-            var student = await _context.Students
-                .Include(s => s.User)  // Include related user data
-                .FirstOrDefaultAsync(s => s.UserId.ToString() == userId);
+    return BadRequest("User is not a student.");
+}
 
-            if (student == null)
-            { 
-                return NotFound("User not found.");
-            }
-
-            // Create response object with the required user and student information
-
-            var userInfo = new
-            {
-                FullName = student.FullName,
-                Username = student.User.Username,
-                RegNumber= student.RegNumber,
-                Email = student.Email,
-                PhoneNumber = student.PhoneNumber
-            };
-
-            return Ok(userInfo);
-        }
 
 
         // Update student's profile
-       [HttpPut("profile")]
-        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateUserDto)
+        [HttpPut("profile")]
+public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateUserDto)
+{
+    var userId = User.Claims
+        .FirstOrDefault(c => c.Type == "UserId")?.Value;
+
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized("User is not authenticated.");
+    }
+
+    // Fetch the user (which could be a Student, Teacher, etc.)
+    var user = await _context.Users
+        .FirstOrDefaultAsync(u => u.UserId.ToString() == userId);
+
+    if (user == null)
+    {
+        return NotFound("User not found.");
+    }
+
+    // Check if the user is a student and fetch the Student-specific details
+    if (user is Student student)
+    {
+        if (!string.IsNullOrEmpty(updateUserDto.UserName))  // Check for non-empty string
         {
-            var userId = User.Claims
-                .FirstOrDefault(c => c.Type == "UserId")?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User is not authenticated.");
-            }
-
-            var student = await _context.Students
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(s => s.UserId.ToString() == userId);
-
-            if (student == null)
-            {
-                return NotFound("User not found.");
-            }
-
-            // Update user properties if the corresponding values are provided
-           if (!string.IsNullOrEmpty(updateUserDto.UserName))  // Check for non-empty string
-            {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                student.User.Username = updateUserDto.UserName;  // Update UserName in Users table
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-            }
-
-            if (!string.IsNullOrEmpty(updateUserDto.FullName))  // Check for non-empty string
-            {
-                student.FullName = updateUserDto.FullName;  // Update FullName in Students table
-            }
-
-            if (!string.IsNullOrEmpty(updateUserDto.Email))  // Check for non-empty string
-            {
-                student.Email = updateUserDto.Email;  // Update Email in Students table
-            }
-
-            if (!string.IsNullOrEmpty(updateUserDto.RegNumber))  // Check for non-empty string
-            {
-                student.RegNumber = updateUserDto.RegNumber;  // Update RegNumber in Students table
-            }
-
-            if (!string.IsNullOrEmpty(updateUserDto.PhoneNumber))  // Check for non-empty string
-            {
-                student.PhoneNumber = updateUserDto.PhoneNumber;  // Update PhoneNumber in Students table
-            }
-
-
-            // Save changes
-#pragma warning disable CS8604 // Possible null reference argument.
-            _context.Users.Update(student.User);  // Update Users table
-#pragma warning restore CS8604 // Possible null reference argument.
-            _context.Students.Update(student);    // Update Students table
-            await _context.SaveChangesAsync();
-
-            var updatedUserInfo = new
-            {
-                student.User.Username,
-                student.FullName,
-                student.RegNumber,
-                student.PhoneNumber,
-                student.Email
-            };
-
-            return Ok(updatedUserInfo);
+            user.Username = updateUserDto.UserName;  // Update Username in Users table
         }
+
+        if (!string.IsNullOrEmpty(updateUserDto.FullName))  // Check for non-empty string
+        {
+            user.FullName = updateUserDto.FullName;  // Update FullName in Users table
+        }
+
+        if (!string.IsNullOrEmpty(updateUserDto.Email))  // Check for non-empty string
+        {
+            user.Email = updateUserDto.Email;  // Update Email in Users table
+        }
+
+        if (!string.IsNullOrEmpty(updateUserDto.PhoneNumber))  // Check for non-empty string
+        {
+            user.PhoneNumber = updateUserDto.PhoneNumber;  // Update PhoneNumber in Users table
+        }
+
+        if (!string.IsNullOrEmpty(updateUserDto.RegNumber))  // Check for non-empty string
+        {
+            student.RegNumber = updateUserDto.RegNumber;  // Update RegNumber in Student (same table)
+        }
+
+        // Save changes
+        _context.Users.Update(user);    // Update Users table
+        await _context.SaveChangesAsync();
+
+        var updatedUserInfo = new
+        {
+            user.Username,
+            user.FullName,
+            student.RegNumber, // Access RegNumber from the Student class
+            user.PhoneNumber,
+            user.Email
+        };
+
+        return Ok(updatedUserInfo);
+    }
+
+    return BadRequest("User is not a student.");
+}
 
 
         // Register for a course using Course Code
-       [HttpPost("registerCourse")]
+        [HttpPost("registerCourse")]
         public async Task<IActionResult> RegisterCourse([FromBody] RegisterCourseDto registerCourseDto)
         {
             if (!ModelState.IsValid)
@@ -164,13 +170,19 @@ namespace StudentController
             if (existingEnrollment != null)
                 return BadRequest("You are already registered for this course.");
 
+            // Fetch the student from the database
+            var student = await _context.Users.FirstOrDefaultAsync(s => s.UserId == userGuid);
+            if (student == null)
+            {
+                return NotFound("Student not found.");
+            }
+
             var enrollment = new Enrollment
             {
                 UserId = userGuid,
                 CourseId = course.Id,
                 Status = registerCourseDto.Status,
                 EnrollmentDate = DateTime.UtcNow,
-                
             };
 
             _context.Enrollments.Add(enrollment);
@@ -180,10 +192,9 @@ namespace StudentController
         }
 
         // Get the student's registered courses
-       [HttpGet("registered-courses")]
+        [HttpGet("registered-courses")]
         public async Task<IActionResult> GetRegisteredCourses()
         {
-            // Extract UserId from Claims
             var userId = User.Claims
                 .FirstOrDefault(c => c.Type == "UserId")?.Value;
 
@@ -194,37 +205,64 @@ namespace StudentController
 
             var userGuid = Guid.Parse(userId);
 
-            // Fetch the enrollments for the current student with course details
-
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var enrollments = await _context.Enrollments
-            .Include(e => e.Courses) // Include the related Course data
-            .Where(e => e.UserId == userGuid) // Filter by UserId (Student's enrolled courses)
-            .Select(e => new
-            {
-                Course = new
+                .Include(e => e.Courses)  // Include the related Course data
+                .Where(e => e.UserId == userGuid)  // Filter by UserId (Student's enrolled courses)
+                .Select(e => new
                 {
-                    e.Courses.CourseCode, // Course code
-                    e.Courses.CourseName  // Course name
-                },
-                e.Status,             // Enrollment status
-                e.EnrollmentDate      // Date of enrollment
-            })
-            .ToListAsync();
+                    e.Courses.CourseCode,
+                    e.Courses.CourseName,
+                    e.Status,
+                    e.EnrollmentDate
+                })
+                .ToListAsync();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-
-
-
-            // If no enrollments found, return an empty array or a message
             if (enrollments == null || !enrollments.Any())
             {
                 return NotFound("No courses found for the current user.");
             }
 
-            // Return the list of registered courses
             return Ok(enrollments);
         }
 
+        //    Assignment     //
+
+        [HttpGet("Assignments/{courseId}")]
+    public async Task<IActionResult> GetAssignmentsByCourse(Guid courseId)
+    {
+        var assignments = await _context.Assignment
+            .Where(a => a.CourseId == courseId)
+            .ToListAsync(); 
+
+        if (assignments == null || !assignments.Any())
+            return NotFound("No assignments found for this course");
+
+        return Ok(assignments);
+    }
+
+            [HttpPost("PostSubmission")]
+        public async Task<IActionResult> PostSubmission([FromBody] SubmissionDto submissionDto)
+        {
+            if (string.IsNullOrWhiteSpace(submissionDto.FileUrl) && string.IsNullOrWhiteSpace(submissionDto.WrittenSubmission))
+            {
+                return BadRequest("You must provide either a file URL or a written response.");
+            }
+
+            var submission = new Submission
+            {
+                AssignmentId = submissionDto.AssignmentId,
+                UserId = submissionDto.UserId,
+                CourseId = submissionDto.CourseId,
+                FileUrl = submissionDto.FileUrl,
+                WrittenSubmission = submissionDto.WrittenSubmission,
+                SubmittedAt = submissionDto.SubmittedAt
+            };
+
+            _context.Submission.Add(submission);
+            await _context.SaveChangesAsync();
+            return CreatedAtRoute("GetAllSubmissionsRoute", new { id = submission.Id }, submission);
+        }
     }
 }

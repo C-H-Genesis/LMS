@@ -39,7 +39,7 @@
       <a routerLink="/manage-users">Manage Users</a>
     </li>
     <li *ngIf="userRole === 'Admin'">
-      <a routerLink="/courses">Manage Courses</a>
+      <a routerLink="/manage-courses">Manage Courses</a>
     </li>
     <li *ngIf="userRole === 'Admin'">
       <a routerLink="/reports">Reports</a>
@@ -51,7 +51,7 @@
       <a routerLink="/finance-dashboard">Home</a>
     </li>
 
-    <li *ngIf="userRole === 'Teacher'">
+    <li *ngIf="userRole === 'Finance'">
       <a routerLink="/profile">Profile</a>
     </li>
 

@@ -4,16 +4,11 @@ using UsersModel;
 
 namespace AdminModel
 {
-    public class Admin
+    public class Admin : User
 {
-    public Guid AdminId { get; set; } = Guid.NewGuid();
-    public Guid UserId { get; set; }
-    public string FullName { get; set; } = string.Empty;
-    public string Department { get; set; } = string.Empty;
-    public string? PhoneNumber { get; set; }
+   public string? office { get; set; }
 
-    // Navigation Property
-    public User? User { get; set; }
+    
 }
 
 }

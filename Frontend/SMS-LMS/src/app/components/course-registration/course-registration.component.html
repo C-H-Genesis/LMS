@@ -1,1 +1,57 @@
-<p>course-registration works!</p>
+<div class="container">
+    <h2>Register Course</h2>
+    <form (ngSubmit)="registerCourse()" class="form">
+      <div class="form-group">
+        <label for="courseCode">Course Code</label>
+        <input
+          type="text"
+          id="courseCode"
+          [(ngModel)]="registerCourseDto.CourseCode"
+          name="courseCode"
+          class="form-control"
+          required
+        />
+      </div>
+  
+      <div class="form-group">
+        <label for="status">Is this your first attempt?</label>
+        <select
+          id="status"
+          [(ngModel)]="registerCourseDto.Status"
+          name="status"
+          class="form-control"
+          required
+        >
+          <option [ngValue]="true">Yes</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </div>
+      
+  
+      <button type="submit" class="btn btn-primary">Register Course</button>
+    </form>
+  
+    <h2 class="mt-4">Registered Courses</h2>
+    <div *ngIf="registeredCourses.length === 0" class="alert alert-info">
+      No registered courses found.
+    </div>
+    <table *ngIf="registeredCourses.length > 0" class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Course Code</th>
+          <th>Course Name</th>
+          <th>Status</th>
+          <th>Enrollment Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let course of registeredCourses">
+            <td>{{ course?.courseCode || 'N/A' }}</td>
+            <td>{{ course?.courseName || 'N/A' }}</td>
+            <td>{{ course?.status ? 'First Attempt' : 'Second Attempt' }}</td>
+            <td>{{ course?.enrollmentDate | date: 'medium' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

@@ -1,24 +1,64 @@
-/* src/app/components/navbar/navbar.component.css */
-.navbar {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-  }
-  
-  .navbar ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 15px;
-  }
-  
-  .navbar ul li a {
-    color: white;
-    text-decoration: none;
-  }
-  
-  .navbar ul li a:hover {
-    text-decoration: underline;
-  }
-  
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+body {
+  background-color: white;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: black;
+}
+
+nav {
+  background-color: #003366; /* Dark blue matching login and register forms */
+  padding: 10px 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+li {
+  margin: 0 10px;
+}
+
+a, button {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 15px;
+  display: inline-block;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+a:hover, button:hover {
+  text-decoration: underline;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-grow: 1;
+}
+
+.logout {
+  margin-left: auto;
+}
+
+.container {
+  padding: 20px;
+}
