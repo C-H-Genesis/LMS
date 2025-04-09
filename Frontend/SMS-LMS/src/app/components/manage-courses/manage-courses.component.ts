@@ -11,6 +11,7 @@ export class ManageCoursesComponent implements OnInit {
   courses: any[] = [];
   newCourse = { Id: '',courseCode: '', courseName: '', teacherName: '' };
   errorMessage = '';
+  showModal = false;
 
   constructor(private courseService: AdminService, private router: Router) {}
 
@@ -29,6 +30,14 @@ export class ManageCoursesComponent implements OnInit {
     );
   }
 
+  openModal() {
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
+  }
+
   addCourse(): void {
     if (!this.newCourse.courseCode || !this.newCourse.courseName || !this.newCourse.teacherName) {
       this.errorMessage = 'All fields are required.';
@@ -38,6 +47,7 @@ export class ManageCoursesComponent implements OnInit {
         (response) => {
           this.errorMessage = '';
           alert('Course added');
+          this.closeModal();
           this.loadCourses();  // Reload courses after adding a new one
           this.newCourse = { Id: '',courseCode: '', courseName: '', teacherName: '' };  // Clear form
         },

@@ -16,6 +16,9 @@ import { StudentFeesComponent } from './components/student-fees/student-fees.com
 import { CourseRegistrationComponent } from './components/course-registration/course-registration.component';
 import { GradesComponent } from './components/grades/grades.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { StudentAssignmentComponent } from './student-assignment/student-assignment.component';
+import { LearningDashboardComponent } from './components/learning-dashboard/learning-dashboard.component';
+
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -37,8 +40,11 @@ const routes: Routes = [
   { path: 'student-dashboard', component: StudentDashboardComponent, canActivate: [roleGuard], data: { role: 'Student' } },
   { path: 'fees', component: StudentFeesComponent, canActivate: [roleGuard], data: { role: 'Student' } },
   { path: 'course-registration', component: CourseRegistrationComponent, canActivate: [roleGuard], data: { role: 'Student' } },
+  { path: 'student-Assignments', component: StudentAssignmentComponent, canActivate: [roleGuard], data: { role: 'Student' } },
   { path: 'grades', component: GradesComponent, canActivate: [roleGuard], data: { role: 'Student' } },
   { path: 'profile', component: ProfileComponent, canActivate: [roleGuard], data: { role: 'Student' } },
+  { path: 'learning-dashboard', component: LearningDashboardComponent, canActivate: [roleGuard], data: { role: 'Student' } },
+
 
 
   { path: 'finance-dashboard', component: FinanceDashboardComponent, canActivate: [roleGuard], data: { role: 'Finance' } },

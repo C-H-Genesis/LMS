@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { TeacherService } from '../../services/teacher.service';
 
 @Component({
   selector: 'app-teacher-my-courses',
@@ -20,7 +21,7 @@ export class TeacherMyCoursesComponent implements OnInit {
   loadingStudents = false;
   errorMessage: string | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private teacherService : TeacherService,private http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadCourses();
@@ -28,26 +29,17 @@ export class TeacherMyCoursesComponent implements OnInit {
 
   loadCourses(): void {
     this.loadingCourses = true;
-    const token = localStorage.getItem('authToken'); // Assuming the JWT token is saved in local storage
-    if (!token) {
-      this.errorMessage = 'Authentication token not found.';
-      this.loadingCourses = false;
-      return;
-    }
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-    this.http.get<any[]>(`${this.apiUrl}/teachers/courses`, { headers })
-      .subscribe(
-        data => {
-          this.courses = data;
-          this.loadingCourses = false;
-        },
-        error => {
-          this.errorMessage = 'Failed to load courses. Please try again later.';
-          console.log(this.errorMessage);
-          this.loadingCourses = false;
-        }
-      );
+    
+    this.teacherService.loadCourses().subscribe(
+      data => {
+        this.courses = data;
+        this.loadingCourses = false;
+      },
+      error => {
+        this.errorMessage = error.message;
+        this.loadingCourses = false;
+      }
+    );
   }
 
   selectCourse(courseCode: string): void {
@@ -64,33 +56,20 @@ export class TeacherMyCoursesComponent implements OnInit {
 
     this.errorMessage = null;
     this.loadingStudents = true;
-    const token = localStorage.getItem('authToken');
 
-    if (!token) {
-      this.errorMessage = 'Authentication token not found.';
-      this.loadingStudents = false;
-      return;
-    }
-
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    this.http.get<any[]>(
-
-        `${this.apiUrl}/teachers/students/${this.enteredCourseCode.trim()}`,{ headers })
-
-      .subscribe(
-        (data) => {
-          this.students = data.map(student => ({
-            regNumber: student.regNumber || 'N/A',
-            fullName: student.fullName || 'Unknown'
-          }));
-          this.loadingStudents = false;
-        },
-        (error) => {
-          console.error('Error fetching students:', error);
-          this.errorMessage = 'Failed to load students. Please check the course code and try again.';
-          this.loadingStudents = false;
-          alert(this.errorMessage);
-        }
-      );
+    this.teacherService.getStudentsByCourseCode(this.enteredCourseCode).subscribe(
+      (data: any[]) => { 
+        this.students = data.map(student => ({
+          regNumber: student.regNumber || 'N/A',
+          fullName: student.fullName || 'Unknown'
+        }));
+        this.loadingStudents = false;
+      },
+      (error: any) => { 
+        this.errorMessage = error.message;
+        this.loadingStudents = false;
+        console.log(this.errorMessage);
+      }
+    );
   }
 }

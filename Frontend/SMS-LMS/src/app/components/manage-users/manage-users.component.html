@@ -1,68 +1,89 @@
 <div *ngIf="!isCreatingUser">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h2>User List</h2>
-      <!-- Add New User Link -->
-      <a (click)="isCreatingUser = true" style="text-decoration: none; color: blue; font-size: 16px; cursor: pointer;">
-        <i style="margin-right: 5px;">➕</i> Add New
-      </a>
-    </div>
-
-    <!-- Filter by Role Dropdown -->
-    <label for="roleFilter">Filter by Role:</label>
+  <h2>User List</h2>
+  <div class="filter-container">
+    Filter by Role:
     <select id="roleFilter" [(ngModel)]="selectedrole" (change)="loadUsersByRole()">
       <option value="">All</option>
       <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-    </select><br><br>
-  
-    <table>
-      <thead>
-        <tr>
-          <th>UserId</th>
-          <th>Name</th>
-          <th>Username</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-          <td>{{ user.userId }}</td>
-          <td>{{ user.fullName }}</td>
-          <td>{{ user.username }}</td>
-          <td>
-            <button (click)="onDeleteUser(user.userId)">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    </select>
+    <div style="gap: 10px; width: 120px; margin-right: 0px;">
+      <a (click)="isCreatingUser = true" class="add-user-btn">
+      <i>➕</i> Add New
+    </a>
+    </div>
+    
   </div>
-  
-  <!-- Create User Form -->
-  <div *ngIf="isCreatingUser">
-    <h2>Create New User</h2>
-    <form (ngSubmit)="onSubmit()" #userForm="ngForm">
+
+  <table>
+    <thead>
+      <tr>
+      <th style="width: 25%;">UserId</th>
+      <th style="width: 20%;">Name</th>
+      <th style="width: 20%;">Username</th>
+      <th style="width: 15%;">Role</th>
+      <th style="width: 20%;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.userId | slice:0:20 }}...</td>
+        <td>{{ user.fullName }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.userType }}</td>
+        <td>
+          <button (click)="onDeleteUser(user.userId)">Delete</button>
+          <button (click)="loadUsersById(user.userId)">More</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Create New User Form -->
+<div *ngIf="isCreatingUser" class="modal">
+    <span class="close" (click)="isCreatingUser = false">&times;</span>
+    <h2>Create New User</h2> 
+    <form (submit)="isCreatingUser">
       <div>
-        <label>Full Name</label>
-        <input type="text" name="fullName" [(ngModel)]="user.fullName" required />
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" [(ngModel)]="user.fullName" name="fullName" required />
       </div>
+
       <div>
-        <label>Username</label>
-        <input type="text" name="username" [(ngModel)]="user.username" required />
+        <label for="username">Username:</label>
+        <input type="text" id="username" [(ngModel)]="user.username" name="username" required />
       </div>
+
       <div>
-        <label>Password</label>
-        <input type="password" name="password" [(ngModel)]="user.password" required />
+        <label for="password">Password:</label>
+        <input type="password" id="password" [(ngModel)]="user.password" name="password" required />
       </div>
+
       <div>
-        <label>Role</label>
-        <select name="role" [(ngModel)]="user.role" required>
-          <option value="Admin">Admin</option>
-          <option value="Student">Student</option>
-          <option value="Teacher">Teacher</option>
-          <option value="Finance">Finance</option>
+        <label for="role">Role:</label>
+        <select id="role" [(ngModel)]="user.usertype" name="role" required>
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
         </select>
       </div>
+
       <button type="submit">Create User</button>
       <button type="button" (click)="isCreatingUser = false">Cancel</button>
     </form>
-  </div>
   
+</div>
+
+<!-- User Details Modal -->
+<div *ngIf="selectedUser" class="modal-container">
+  <div class="modal">
+    <span class="close" (click)="selectedUser = null">&times;</span>
+    <h2>User Details</h2>
+    <p><strong>User ID:</strong> {{ selectedUser.userId }}</p>
+    <p><strong>Name:</strong> {{ selectedUser.fullName }}</p>
+    <p><strong>Username:</strong> {{ selectedUser.username }}</p>
+    <p><strong>Role:</strong> {{ selectedUser.userType }}</p>
+    <p><strong>RegNumber:</strong> {{ selectedUser.regNumber }}</p>
+    <p><strong>PhoneNumber:</strong> {{ selectedUser.phoneNumber }}</p>
+    <p><strong>Enrollment Date:</strong> {{ selectedUser.enrollmentDate }}</p>
+    <button (click)="selectedUser = null">Close</button>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule, FormsModule  } from '@angular/forms';
 import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -20,6 +20,10 @@ import { TeacherAssignmentsComponent } from './components/teacher-assignments/te
 import { ManageUsersComponent } from './components/manage-users/manage-users.component';
 import { ManageCoursesComponent } from './components/manage-courses/manage-courses.component';
 import { ReportsComponent } from './components/reports/reports.component';
+import { StudentAssignmentComponent } from './student-assignment/student-assignment.component';
+import { LearningDashboardComponent } from './components/learning-dashboard/learning-dashboard.component';
+
+
 
 
 @NgModule({
@@ -41,6 +45,8 @@ import { ReportsComponent } from './components/reports/reports.component';
     ManageUsersComponent,
     ManageCoursesComponent,
     ReportsComponent,
+    StudentAssignmentComponent,
+    LearningDashboardComponent,
     
   ],
   imports: [
@@ -49,7 +55,11 @@ import { ReportsComponent } from './components/reports/reports.component';
     ReactiveFormsModule,
     HttpClientModule,
     FormsModule ,
+    BrowserModule,
+   
+    
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     provideHttpClient(withFetch())
   ],

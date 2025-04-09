@@ -47,4 +47,19 @@ export class StudentService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.get(`${this.apiUrl}/registered-courses`, { headers });
   }
+
+
+  uploadAssignmentFile(file: File, courseId: string, userId: string): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('courseId', courseId);
+    formData.append('studentId', userId);
+
+    return this.http.post(`http://localhost:5183/api/uploadAssignmentFile`, formData);
+  }
+
+  submitWrittenAssignment(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/submitWrittenAssignment`, data);
+  }
+
 }

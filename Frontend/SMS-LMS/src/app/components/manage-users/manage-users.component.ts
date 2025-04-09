@@ -23,6 +23,8 @@ export class ManageUsersComponent implements OnInit {
   };
   selectedrole : string = '';
   roles: string[] = ['Admin', 'Student', 'Teacher', 'Finance'];
+  selectedUser: any = null;
+  showModal = false;
 
   constructor(private adminService: AdminService, private router: Router) {}
 
@@ -36,7 +38,16 @@ export class ManageUsersComponent implements OnInit {
     });
   }
 
-  loadUsersByRole() {
+  loadUsersById(userId: string) {
+    console.log("Fetching user with ID:", userId);
+    this.adminService.getAllUsersById(userId).subscribe((data: any) => {
+      this.selectedUser = data; // Store the selected user's details
+    }, (error) => {
+      console.log("Error fetching user details:", error);
+    });
+  }
+
+  loadUsersByRole() { 
     if (!this.selectedrole) {
       // If no role is selected, fetch all users
       this.adminService.getAllUsers().subscribe((data: any) => {
@@ -85,4 +96,26 @@ export class ManageUsersComponent implements OnInit {
         });
     }
   }
+
+
+  updateUser() {
+    if (!this.selectedUser.userId) {
+      alert("User ID is missing!");
+      return;
+    }
+  
+    this.adminService.updateUserInfo(this.selectedUser.userId)
+      .subscribe(() => {
+        alert('User updated successfully!');
+        this.showModal = false;
+        this.loadUsers(); // Refresh user list
+      }, error => {
+        alert(error.error);
+      });
+  }
+  
+  closeModal() {
+    this.showModal = false;
+  }
+  
 }

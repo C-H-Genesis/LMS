@@ -34,23 +34,34 @@
   
     <div *ngIf="courses.length === 0" class="alert alert-info">No courses available.</div>
   
-  
-    <!-- Add new course form -->
-    <h3>Add New Course</h3>
-    <form (ngSubmit)="addCourse()">
-      <div class="form-group">
-        <label for="courseCode">Course Code</label>
-        <input id="courseCode" [(ngModel)]="newCourse.courseCode" name="courseCode" type="text" class="form-control" required />
-      </div>
-      <div class="form-group">
-        <label for="courseName">Course Name</label>
-        <input id="courseName" [(ngModel)]="newCourse.courseName" name="courseName" type="text" class="form-control" required />
-      </div>
-      <div class="form-group">
-        <label for="teacherName">Teacher Name</label>
-        <input id="teacherName" [(ngModel)]="newCourse.teacherName" name="teacherName" type="text" class="form-control" required />
-      </div>
-      <button type="submit" class="btn btn-primary">Add Course</button>
-    </form>
+
+  <!-- Button to Open Modal -->
+  <button (click)="openModal()" class="btn btn-primary add-course-btn">+ Add New Course</button>
+
+  <!-- Modal Background -->
+  <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()"></div>
+
+  <!-- Add New Course Modal -->
+  <div *ngIf="showModal" class="modal">
+    <div class="modal-content">
+      <h3>Add New Course</h3>
+      <form (ngSubmit)="addCourse()">
+        <div class="form-group">
+          <label for="courseCode">Course Code</label>
+          <input id="courseCode" [(ngModel)]="newCourse.courseCode" name="courseCode" type="text" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label for="courseName">Course Name</label>
+          <input id="courseName" [(ngModel)]="newCourse.courseName" name="courseName" type="text" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label for="teacherName">Teacher Name</label>
+          <input id="teacherName" [(ngModel)]="newCourse.teacherName" name="teacherName" type="text" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-success">Save Course</button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+      </form>
+    </div>
   </div>
+</div>
   

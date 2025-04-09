@@ -19,6 +19,12 @@ export class AdminService {
     return this.http.get(`${this.baseUrl}/users`, { headers });
   }
 
+  getAllUsersById(userId: string) {
+    const token = localStorage.getItem('authToken'); // Retrieve token from localStorage
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get(`${this.baseUrl}/${userId}`, { headers });
+  }
+
   getAllUsersByRole(role: string){
     const token = this.authService.getToken(); // Retrieve token from localStorage
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -42,6 +48,12 @@ export class AdminService {
     const token = this.authService.getToken(); // Retrieve token from localStorage
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.post(`${this.baseUrl}/create-user`, userData, { headers });
+  }
+
+  updateUserInfo(userId : any){
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders().set('Authorization',`Bearer ${token}`);
+    return this.http.put(`${this.baseUrl}/profile/${userId}`,{ headers });
   }
 
   //             Course Operations                       //

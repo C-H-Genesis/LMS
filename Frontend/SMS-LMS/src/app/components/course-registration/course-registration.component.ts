@@ -10,8 +10,8 @@ import { RegisterCourseDto } from '../../DTOs/RegisterCourseDto';
 })
 export class CourseRegistrationComponent  implements OnInit {
   registerCourseDto! : RegisterCourseDto;
-
   registeredCourses: any[] = [];
+  showModal = false;
 
   constructor(private studentService: StudentService) {}
 
@@ -21,6 +21,14 @@ export class CourseRegistrationComponent  implements OnInit {
       Status: true  || false// Default to "First Attempt"
     };
     this.fetchRegisteredCourses();
+  }
+  
+  openModal() : void {
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
   }
 
   registerCourse(): void { 
@@ -51,4 +59,6 @@ export class CourseRegistrationComponent  implements OnInit {
       }
     );
   }
+
+ 
 }
