@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { TeacherService } from '../../services/teacher.service';
 
 @Component({
-  selector: 'app-teacher-assignments',
-  templateUrl: './teacher-assignments.component.html',
-  styleUrl: './teacher-assignments.component.css'
+    selector: 'app-teacher-assignments',
+    templateUrl: './teacher-assignments.component.html',
+    styleUrl: './teacher-assignments.component.css',
+    standalone: false
 })
 export class TeacherAssignmentsComponent {
 

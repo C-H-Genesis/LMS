@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { StudentService } from '../../services/student.service';
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+    selector: 'app-profile',
+    templateUrl: './profile.component.html',
+    styleUrl: './profile.component.css',
+    standalone: false
 })
 export class ProfileComponent implements OnInit {
   profile: any = null;

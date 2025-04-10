@@ -6,9 +6,10 @@ import { Router } from '@angular/router';
 import { Console, error, log } from 'console';
 
 @Component({
-  selector: 'app-manage-users',
-  templateUrl: './manage-users.component.html',
-  styleUrl: './manage-users.component.css'
+    selector: 'app-manage-users',
+    templateUrl: './manage-users.component.html',
+    styleUrl: './manage-users.component.css',
+    standalone: false
 })
 export class ManageUsersComponent implements OnInit {
   users: any[] = [];

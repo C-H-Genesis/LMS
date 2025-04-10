@@ -5,9 +5,10 @@ import { LoginRequest } from '../../DTOs/LoginRequest';
 import { AuthService } from '../../auth/auth.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.css'],
+    standalone: false
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;

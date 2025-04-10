@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../auth/auth.service';  // Service to get role and token
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+    selector: 'app-navbar',
+    templateUrl: './navbar.component.html',
+    styleUrls: ['./navbar.component.css'],
+    standalone: false
 })
 export class NavbarComponent implements OnInit {
   userRole: string | null = null;

@@ -4,9 +4,10 @@ import { environment } from '../../environments/environment';
 import { TeacherService } from '../../services/teacher.service';
 
 @Component({
-  selector: 'app-teacher-my-courses',
-  templateUrl: './teacher-my-courses.component.html',
-  styleUrl: './teacher-my-courses.component.css'
+    selector: 'app-teacher-my-courses',
+    templateUrl: './teacher-my-courses.component.html',
+    styleUrl: './teacher-my-courses.component.css',
+    standalone: false
 })
 export class TeacherMyCoursesComponent implements OnInit {
 

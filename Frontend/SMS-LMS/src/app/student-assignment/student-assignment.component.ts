@@ -3,9 +3,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { StudentService } from '../services/student.service';
 
 @Component({
-  selector: 'app-student-assignment',
-  templateUrl: './student-assignment.component.html',
-  styleUrl: './student-assignment.component.css'
+    selector: 'app-student-assignment',
+    templateUrl: './student-assignment.component.html',
+    styleUrl: './student-assignment.component.css',
+    standalone: false
 })
 export class StudentAssignmentComponent {
   assignmentForm: FormGroup;

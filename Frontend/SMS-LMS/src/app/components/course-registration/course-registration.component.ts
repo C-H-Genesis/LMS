@@ -4,9 +4,10 @@ import { RegisterCourseDto } from '../../DTOs/RegisterCourseDto';
 
 
 @Component({
-  selector: 'app-course-registration',
-  templateUrl: './course-registration.component.html',
-  styleUrl: './course-registration.component.css'
+    selector: 'app-course-registration',
+    templateUrl: './course-registration.component.html',
+    styleUrl: './course-registration.component.css',
+    standalone: false
 })
 export class CourseRegistrationComponent  implements OnInit {
   registerCourseDto! : RegisterCourseDto;

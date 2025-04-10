@@ -3,9 +3,10 @@ import { AdminService } from '../../services/admin.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-manage-courses',
-  templateUrl: './manage-courses.component.html',
-  styleUrl: './manage-courses.component.css'
+    selector: 'app-manage-courses',
+    templateUrl: './manage-courses.component.html',
+    styleUrl: './manage-courses.component.css',
+    standalone: false
 })
 export class ManageCoursesComponent implements OnInit {
   courses: any[] = [];
