@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\LMS\\backend\\SMS.csproj": {}
+    "D:\\lms\\backend\\SMS.csproj": {}
   },
   "projects": {
-    "D:\\LMS\\backend\\SMS.csproj": {
+    "D:\\lms\\backend\\SMS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\LMS\\backend\\SMS.csproj",
+        "projectUniqueName": "D:\\lms\\backend\\SMS.csproj",
         "projectName": "SMS",
-        "projectPath": "D:\\LMS\\backend\\SMS.csproj",
+        "projectPath": "D:\\lms\\backend\\SMS.csproj",
         "packagesPath": "C:\\Users\\Haston\\.nuget\\packages\\",
-        "outputPath": "D:\\LMS\\backend\\obj\\",
+        "outputPath": "D:\\lms\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Haston\\AppData\\Roaming\\NuGet\\NuGet.Config",

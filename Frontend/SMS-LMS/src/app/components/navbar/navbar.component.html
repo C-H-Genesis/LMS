@@ -1,48 +1,48 @@
-<c-navbar colorScheme="light" expand="lg" class="bg-light">
-  <c-container fluid>
-    <a cNavbarBrand href="#">LMS</a>
-    <button [cNavbarToggler]="collapseRef"></button>
-    <div #collapseRef="cCollapse" navbar cCollapse>
-      <c-navbar-nav class="me-auto mb-2 mb-lg-0">
+<c-navbar colorScheme="light" class="bg-light">
+  <c-container fluid class="d-flex align-items-center">
 
-        <!-- Student Navbar Items -->
-        <ng-container *ngIf="userRole === 'Student'">
-          <c-nav-item><a cNavLink routerLink="/student-dashboard">Home</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/fees">Fees</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/course-registration">Course Registration</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/student-Assignments">Assignments</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/grades">Grades</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/profile">Profile</a></c-nav-item>
-        </ng-container>
+    <!-- Brand/logo on the left -->
+    <c-navbar-brand href="#">LMS</c-navbar-brand>
 
-        <!-- Teacher Navbar Items -->
-        <ng-container *ngIf="userRole === 'Teacher'">
-          <c-nav-item><a cNavLink routerLink="/teacher-dashboard">Home</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/my-courses">My Courses</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/assignments">Assignments</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/profile">Profile</a></c-nav-item>
-        </ng-container>
+    <!-- Nav items on the far right -->
+    <ul class="navbar-nav d-flex flex-row align-items-relative ms-auto">
 
-        <!-- Admin Navbar Items -->
-        <ng-container *ngIf="userRole === 'Admin'">
-          <c-nav-item><a cNavLink routerLink="/admin-dashboard">Dashboard</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/manage-users">Manage Users</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/manage-courses">Manage Courses</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/reports">Reports</a></c-nav-item>
-        </ng-container>
+      <!-- Student Navbar Items -->
+      <ng-container *ngIf="userRole === 'Student'">
+        <li class="nav-item me-3"><a cNavLink routerLink="/student-dashboard">Home</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/fees">Fees</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/course-registration">Course Registration</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/student-Assignments">Assignments</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/grades">Grades</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/profile">Profile</a></li>
+      </ng-container>
 
-        <!-- Finance Navbar Items -->
-        <ng-container *ngIf="userRole === 'Finance'">
-          <c-nav-item><a cNavLink routerLink="/finance-dashboard">Home</a></c-nav-item>
-          <c-nav-item><a cNavLink routerLink="/profile">Profile</a></c-nav-item>
-        </ng-container>
+      <!-- Teacher Navbar Items -->
+      <ng-container *ngIf="userRole === 'Teacher'">
+        <li class="nav-item me-3"><a cNavLink routerLink="/teacher-dashboard">Home</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/my-courses">My Courses</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/assignments">Assignments</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/profile">Profile</a></li>
+      </ng-container>
 
-        <!-- Logout (always visible) -->
-        <c-nav-item>
-          <button cButton color="danger" size="sm" class="ms-2" (click)="logout()">Logout</button>
-        </c-nav-item>
-        
-      </c-navbar-nav>
-    </div>
+      <!-- Admin Navbar Items -->
+      <ng-container *ngIf="userRole === 'Admin'">
+        <li class="nav-item me-3"><a cNavLink routerLink="/admin-dashboard">Dashboard</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/manage-users">Manage Users</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/manage-courses">Manage Courses</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/reports">Reports</a></li>
+      </ng-container>
+
+      <!-- Finance Navbar Items -->
+      <ng-container *ngIf="userRole === 'Finance'">
+        <li class="nav-item me-3"><a cNavLink routerLink="/finance-dashboard">Home</a></li>
+        <li class="nav-item me-3"><a cNavLink routerLink="/profile">Profile</a></li>
+      </ng-container>
+
+      <!-- Logout Button -->
+      <li class="nav-item">
+        <button cButton size="sm" (click)="logout()">Logout</button>
+      </li>
+    </ul>
   </c-container>
 </c-navbar>

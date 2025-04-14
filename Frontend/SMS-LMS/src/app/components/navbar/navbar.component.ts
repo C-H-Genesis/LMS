@@ -8,6 +8,7 @@ import { AuthService } from '../../auth/auth.service';  // Service to get role a
     standalone: false
 })
 export class NavbarComponent implements OnInit {
+  isCollapsed = false;
   userRole: string | null = null;
 
   constructor(private authService: AuthService) {}

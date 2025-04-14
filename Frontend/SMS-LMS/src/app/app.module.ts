@@ -22,6 +22,11 @@ import { ManageCoursesComponent } from './components/manage-courses/manage-cours
 import { ReportsComponent } from './components/reports/reports.component';
 import { StudentAssignmentComponent } from './student-assignment/student-assignment.component';
 import { LearningDashboardComponent } from './components/learning-dashboard/learning-dashboard.component';
+import { CollapseModule } from '@coreui/angular';
+import { NavbarModule } from '@coreui/angular';
+import { NavModule } from '@coreui/angular';
+import { ButtonModule } from '@coreui/angular';
+import { SharedModule } from '@coreui/angular'; // For <c-container>
 
 
 
@@ -56,6 +61,11 @@ import { LearningDashboardComponent } from './components/learning-dashboard/lear
     HttpClientModule,
     FormsModule ,
     BrowserModule,
+    CollapseModule,
+    NavbarModule,
+    NavModule,
+    ButtonModule,
+    SharedModule
    
     
   ],
