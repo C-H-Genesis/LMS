@@ -89,5 +89,17 @@ private apiUrl = `${environment.apiUrl}/api`;
 
     return this.http.post(`${this.apiUrl}/teachers/createNewAssignment`, assignmentData,{ headers });
   }
+
+  getAssignmentsByTeacher(): Observable<any[]> {
+    const token = localStorage.getItem('authToken'); // Assuming the JWT token is saved in local storage
+
+    if (!token) {
+      console.error("No auth token found!");
+      return new Observable(observer => observer.error("No auth token found"));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<any[]>(`${this.apiUrl}/teachers/GetAllAssignments`, { headers });
+  }
   
 }

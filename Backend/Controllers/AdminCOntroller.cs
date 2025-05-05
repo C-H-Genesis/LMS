@@ -18,6 +18,7 @@ using RegisterDTO;
 using StudentModel;
 using UpdateProfile;
 using UpdateUserInfoDto;
+using AssignmentModel;
 
 
 namespace AdminController
@@ -71,7 +72,7 @@ namespace AdminController
         public async Task<IActionResult> UpdateProfile(Guid userId, [FromBody] UpdateUserInfo updateUserDto)
         {
             // Check if the authenticated user is an admin
-            var role = User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
+            var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             if (role != "Admin")
             {
                 return Unauthorized("Only admins can update user profiles.");
@@ -98,15 +99,28 @@ namespace AdminController
                 user.PhoneNumber = updateUserDto.PhoneNumber;
 
             // Update role (only if admin is changing it)
-           if (!string.IsNullOrEmpty(updateUserDto.Role))
+          // Update roles (only if admin is changing them)
+            if (updateUserDto.Roles != null && updateUserDto.Roles.Any())
             {
-                var roleEntity = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == updateUserDto.Role);
-                if (roleEntity == null)
+                // Remove existing roles
+                var existingRoles = _context.UserRoles.Where(ur => ur.UserId == userId);
+                _context.UserRoles.RemoveRange(existingRoles);
+
+                // Add new roles
+                foreach (var roleName in updateUserDto.Roles)
                 {
-                    return BadRequest("Invalid role selected.");
+                    var roleEntity = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == roleName);
+                    if (roleEntity == null)
+                    {
+                        return BadRequest($"Invalid role: {roleName}");
+                    }
+
+                    _context.UserRoles.Add(new UserRole
+                    {
+                        UserId = userId,
+                        RoleId = roleEntity.RoleId
+                    });
                 }
-                
-                user.Role = roleEntity; // Assign the role entity object
             }
 
 
@@ -121,9 +135,62 @@ namespace AdminController
                 user.FullName,
                 user.Email,
                 user.PhoneNumber,
-                user.Role
+                Roles = user.Roles.Select(r => r.RoleName)
             });
         }
+
+        [HttpPost("assign-roles/{userId}")]
+        public async Task<IActionResult> AssignRolesToUser(Guid userId, [FromBody] List<string> roleNames)
+        {
+            // Find the user by ID
+            var user = await _context.Users.Include(u => u.UserRoles).FirstOrDefaultAsync(u => u.UserId == userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Fetch the roles based on role names provided
+            var roles = await _context.Roles
+                .Where(r => roleNames.Contains(r.RoleName))
+                .ToListAsync();
+
+            if (roles.Count == 0)
+            {
+                return BadRequest("One or more roles are invalid.");
+            }
+
+            // Add the roles to the user's UserRoles table
+            foreach (var role in roles)
+            {
+                // Check if the user is already assigned this role
+                if (!user.UserRoles.Any(ur => ur.RoleId == role.RoleId))
+                {
+                    var userRole = new UserRole
+                    {
+                        UserId = user.UserId,
+                        RoleId = role.RoleId
+                    };
+                    await _context.UserRoles.AddAsync(userRole);
+                }
+            }
+
+            // Save changes to the database
+            var save = await _context.SaveChangesAsync();
+
+            if (save > 0)
+            {
+                return Ok(new { message = "Roles assigned successfully." });
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails
+                {
+                    Title = "Role assignment failed.",
+                    Detail = "An error occurred while assigning roles."
+                });
+            }
+        }
+
 
 
         [HttpPost("create-user")]
@@ -297,7 +364,8 @@ namespace AdminController
                 CourseCode = courseDto.CourseCode,
                 CourseName = courseDto.CourseName, 
                 UserId = user.UserId,
-                Enrollments = new List<Enrollment>()
+                Enrollments = new List<Enrollment>(),
+                Assignments = new List<Assignments>() 
                 
             };
             

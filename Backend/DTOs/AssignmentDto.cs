@@ -20,7 +20,11 @@ namespace AssignmentDTO
         [Required]  // Ensure CourseId is mandatory
         public Guid CourseId { get; set; }
 
+        public string? CourseName { get; set; }
         public string? FileUrl { get; set;}
+
+        [Required]
+        public Guid TeacherId { get; set; }
         
     }
 }

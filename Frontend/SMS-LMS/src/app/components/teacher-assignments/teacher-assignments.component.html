@@ -1,23 +1,69 @@
-<br><br>
-<form (submit)="submitAssignment()">
-    <!-- Select Course -->
-    <label for="course">Select Course:</label>
-    <select [(ngModel)]="selectedCourseId" name="courseId" required>
-      <option *ngFor="let course of courses" [value]="course.id">
-        {{ course.courseName }}
-      </option>
-    </select>
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="header">
+    <h2>Assignments</h2>
+    <button class="btn-create" (click)="openModal()">+ Create</button>
+  </div>
+
+  <!-- Assignment Table -->
+  <div class="table-container">
+    <table *ngIf="loadAssignments && loadAssignments.length > 0; noData" class="assignment-table">
+      <thead>
+        <tr>
+          <th>Course</th>
+          <th>Title</th>
+          <th>Created At</th>
+          <th>Due Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let assignment of loadAssignments">
+          <td>{{assignment.courseName}}</td>
+          <td>
+            <span (click)="viewAssignment( assignment)" style="color:blue; cursor:pointer; text-decoration:underline;">
+              {{ assignment.title }}
+            </span>
+          </td>
+          <td>{{ assignment.createdAt | date: 'short' }}</td>
+          <td>{{ assignment.dueDate | date }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="selectedAssignment" class="assignment-detail">
+    <h2>{{ selectedAssignment.title }}</h2>
+    <p><strong>Written Assignment:</strong></p>
+    <p>{{ selectedAssignment.writtenAssignment }}</p>
   
-    <!-- Assignment Details -->
-    <input type="text" [(ngModel)]="title" placeholder="Title" name="title" required>
-    <textarea [(ngModel)]="description" placeholder="Description" name="description" required></textarea>
-    <textarea [(ngModel)]="WrittenAssignment" placeholder="WrittenAssignment" name="WrittenAssignment" required></textarea>
-    <input type="date" [(ngModel)]="dueDate" name="dueDate" required>
+    <button (click)="closeAssignment()">Close</button>
+  </div>
   
-    <!-- File Upload -->
-    <input type="file" (change)="onFileSelected($event)">
   
-    <!-- Submit Button -->
-    <button type="submit">Create Assignment</button>
-  </form>
-  
+
+  <!-- Modal Form -->
+  <div class="custom-modal-backdrop" *ngIf="showModal">
+    <div class="custom-modal">
+      <div class="modal-header">
+        <h3>Create Assignment</h3>
+        <button class="close-button" (click)="closeModal()">×</button>
+      </div>
+      <form (submit)="submitAssignment()" class="form">
+        <label>Select Course:
+          <select [(ngModel)]="selectedCourseId" name="courseId" required>
+            <option *ngFor="let course of courses" [value]="course.id">{{ course.courseName }}</option>
+          </select>
+        </label>
+
+        <input type="text" [(ngModel)]="title" name="title" placeholder="Title" required />
+        <textarea [(ngModel)]="description" name="description" placeholder="Description" required></textarea>
+        <textarea [(ngModel)]="WrittenAssignment" name="WrittenAssignment" placeholder="Written Assignment" required></textarea>
+        <input type="date" [(ngModel)]="dueDate" name="dueDate" required />
+        <input type="file" (change)="onFileSelected($event)" />
+        <button type="submit" class="btn-submit">Upload</button>
+      </form>
+    </div>
+  </div>
+
+</div>

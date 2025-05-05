@@ -30,7 +30,7 @@
      <div class ="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Register Course</h4>
-        <button type="button" class="close" (click)="closeModal()">&times;</button>
+        <span class=" register-close" (click)="closeModal()">&times;</span>
       </div>
       <div class="modal-body">
         <form (ngSubmit)="registerCourse()" class="form">
@@ -67,5 +67,5 @@
      </div>
   </div>
 
-  <a routerLink="/learning-dashboard" class="btn btn-link mt-3">Go to Learning Dashboard</a>
+  <a class="btn btn-link mt-3">Go to Learning Dashboard</a>
 </div>

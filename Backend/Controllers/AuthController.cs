@@ -142,7 +142,7 @@ namespace AuthController
             }
 
             var user = await _context.Users
-                .Include(u => u.Role)
+                .Include(u => u.Roles)
                 .FirstOrDefaultAsync(u => u.Username == request.Username);
 
             if (user == null)
@@ -164,7 +164,7 @@ namespace AuthController
         }
 
         // Token generation method (unchanged)
-        private string GenerateToken(User user)
+            private string GenerateToken(User user)
         {
             if (user == null)
             {
@@ -176,20 +176,21 @@ namespace AuthController
                 throw new InvalidOperationException("User.Username cannot be null or empty.");
             }
 
-            if (user.Role == null || string.IsNullOrEmpty(user.Role.RoleName))
+            if (user.Roles == null || !user.Roles.Any())
             {
                 throw new InvalidOperationException("User role information is not available.");
             }
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role.RoleName),
                 new Claim("UserId", user.UserId.ToString())
             };
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
+            foreach (var role in user.Roles)
+            {
+                claims.Add(new Claim("Role", role.RoleName));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ThisisYourSecretKeyHereof32bytes"));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -204,4 +205,7 @@ namespace AuthController
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
+
 }
+
+

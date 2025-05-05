@@ -229,8 +229,8 @@ public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updat
 
         //    Assignment     //
 
-        [HttpGet("Assignments/{courseId}")]
-        public async Task<IActionResult> GetAssignmentsByCourse(Guid courseId)
+        [HttpGet("Assignments")]
+        public async Task<IActionResult> GetAssignmentsForEnrolledCourses()
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
 
@@ -241,22 +241,25 @@ public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updat
 
             var userGuid = Guid.Parse(userId);
 
-            // Check if the user is enrolled in the requested course
-            var isEnrolled = await _context.Enrollments
-                .AnyAsync(e => e.UserId == userGuid && e.CourseId == courseId);
+            // Get the list of courses the user is enrolled in
+            var enrolledCourses = await _context.Enrollments
+                .Where(e => e.UserId == userGuid)
+                .Select(e => e.CourseId)
+                .ToListAsync();
 
-            if (!isEnrolled)
+            if (!enrolledCourses.Any())
             {
-                return Forbid("You are not enrolled in this course.");
+                return NotFound("You are not enrolled in any courses.");
             }
 
+            // Get assignments for all enrolled courses
             var assignments = await _context.Assignment
-                .Where(a => a.CourseId == courseId)
+                .Where(a => enrolledCourses.Contains(a.CourseId))
                 .ToListAsync();
 
             if (assignments == null || !assignments.Any())
             {
-                return NotFound("No assignments found for this course.");
+                return NotFound("No assignments found for the courses you are enrolled in.");
             }
 
             return Ok(assignments);

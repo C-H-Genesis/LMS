@@ -135,23 +135,77 @@ namespace TeacherControllers
                     return BadRequest("Missing required fields: Title, Description, or CourseId.");
                 }
 
-                // Create the assignment
-                var assignment = new Assignments
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+
+                if (string.IsNullOrWhiteSpace(userIdClaim))
                 {
-                    Title = assignmentDto.Title,
-                    Description = assignmentDto.Description,
-                    WrittenAssignment = assignmentDto.WrittenAssignment,
-                    CreatedAt = DateTime.UtcNow,
-                    DueDate = assignmentDto.DueDate,
-                    FileUrl = assignmentDto.FileUrl ?? "", // Store file URL if uploaded
-                    CourseId = assignmentDto.CourseId
-                };
+                    return Unauthorized(new { message = "User ID not found in token" });
+                }
 
-                _context.Assignment.Add(assignment);
-                await _context.SaveChangesAsync();
+                if (!Guid.TryParse(userIdClaim, out Guid userGuid))
+                {
+                    return BadRequest(new { message = "Invalid User ID format" });
+                }
 
-                return Ok(new { message = "Assignment posted successfully" });
-        }
+
+
+                     // Create the assignment
+                    var assignment = new Assignments
+                    {
+                        Title = assignmentDto.Title,
+                        Description = assignmentDto.Description,
+                        WrittenAssignment = assignmentDto.WrittenAssignment,
+                        CreatedAt = DateTime.UtcNow,
+                        DueDate = assignmentDto.DueDate,
+                        FileUrl = assignmentDto.FileUrl ?? "", // Store file URL if uploaded
+                        CourseId = assignmentDto.CourseId,
+                        TeacherId = userGuid
+                    };
+
+                     _context.Assignment.Add(assignment);
+                    await _context.SaveChangesAsync();
+
+                    return Ok(new { message = "Assignment posted successfully" });
+                }
+
+            //       Get All Assignments            //
+
+                [HttpGet("GetAllAssignments")]
+
+                public async Task<IActionResult> GetAllAssignments()
+                {
+                   var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+
+                    if (string.IsNullOrWhiteSpace(userIdClaim))
+                    {
+                        return Unauthorized(new { message = "User ID not found in token" });
+                    }
+
+                    if (!Guid.TryParse(userIdClaim, out Guid userGuid))
+                    {
+                        return BadRequest(new { message = "Invalid User ID format" });
+                    }
+
+
+                    var assignments = await _context.Assignment
+                    .Where(a => a.TeacherId == userGuid)
+                    .Include(a => a.Course) 
+                    .ToListAsync();
+
+                    var result = assignments.Select(a => new 
+                    {
+                        Id = a.Id,
+                        Title = a.Title,
+                        Description = a.Description,
+                        DueDate = a.DueDate,
+                        CreatedAt = a.CreatedAt,
+                        WrittenAssignment = a.WrittenAssignment,
+                        FileUrl = a.FileUrl,
+                        CourseName = a.Course?.CourseName ?? "Unknown Course"
+                    }).ToList();
+
+                    return Ok(result);
+                }
 
 
             //             SUBMISSIONS               //

@@ -38,11 +38,9 @@
   <!-- Button to Open Modal -->
   <button (click)="openModal()" class="btn btn-primary add-course-btn">+ Add New Course</button>
 
-  <!-- Modal Background -->
-  <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()"></div>
-
   <!-- Add New Course Modal -->
-  <div *ngIf="showModal" class="modal">
+  <div *ngIf="showModal" class="modal-overlay">
+    <span class=" create-close" (click)="closeModal()">&times;</span>
     <div class="modal-content">
       <h3>Add New Course</h3>
       <form (ngSubmit)="addCourse()">

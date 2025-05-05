@@ -1,1 +1,81 @@
-<p>student-assignment works!</p>
+<div *ngIf="loadingAssignments">Loading assignments...</div>
+
+<div *ngIf="errorMessage" class="error">
+  <p>{{ errorMessage }}</p>
+</div>
+
+<div *ngIf="assignments.length > 0">
+  <div *ngFor="let assignment of assignments">
+    <div (click)="viewAssignment(assignment)">
+      <h3>{{ assignment.name }}</h3>
+      <p>{{ assignment.description }}</p>
+
+      <!-- Display Written Assignment -->
+      <div *ngIf="assignment.writtenAssignment && assignment.writtenAssignment.trim()">
+        <h4>Written Assignment:</h4>
+        <p>{{ assignment.writtenAssignment }}</p>
+      </div>
+
+      <!-- Display File Assignment -->
+      <div *ngIf="assignment.fileUrl && assignment.fileUrl.trim()">
+        <h4>Assignment File:</h4>
+        <a [href]="assignment.fileUrl" target="_blank">View File</a>
+      </div>
+      
+      <!-- Optionally Display Images if the assignment is a design -->
+      <div *ngIf="assignment.designUrl && assignment.designUrl.trim()">
+        <h4>Design:</h4>
+        <img [src]="assignment.designUrl" alt="Student Design" class="assignment-design">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="assignments.length === 0 && !loadingAssignments">
+  <p>No assignments found for this course.</p>
+</div>
+
+
+
+
+
+<div class="assignment-container">
+    <h2>Submit Your Assignment</h2>
+  
+    <form [formGroup]="assignmentForm" (ngSubmit)="submitAssignment()">
+      <!-- Select Course -->
+      <div class="form-group">
+        <label for="course">Course</label>
+        <input id="course" formControlName="course" type="text" placeholder="Enter Course ID or Name" />
+      </div>
+  
+      <!-- Select Due Date -->
+      <div class="form-group">
+        <label for="dueDate">Due Date</label>
+        <input id="dueDate" formControlName="dueDate" type="date" />
+      </div>
+  
+      <!-- Toggle between File Upload or Written -->
+      <div class="form-group">
+        <label>
+          <input type="checkbox" (change)="toggleUploadMode()" /> Upload File Instead of Writing
+        </label>
+      </div>
+  
+      <!-- If File Upload Mode -->
+      <div *ngIf="isFileUpload" class="form-group">
+        <label for="file">Select File</label>
+        <input id="file" type="file" (change)="onFileSelected($event)" />
+      </div>
+  
+      <!-- If Written Assignment Mode -->
+      <div *ngIf="!isFileUpload" class="form-group">
+        <label for="writtenAssignment">Write Assignment</label>
+        <textarea id="writtenAssignment" formControlName="writtenAssignment" rows="6" placeholder="Write your answer here..."></textarea>
+      </div>
+  
+      <!-- Submit Button -->
+      <button type="submit" [disabled]="assignmentForm.invalid && !isFileUpload">Submit Assignment</button>
+    </form>
+  </div>
+  

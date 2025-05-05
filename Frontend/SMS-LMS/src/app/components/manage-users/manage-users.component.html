@@ -1,12 +1,12 @@
-<div *ngIf="!isCreatingUser">
+<div *ngIf="!isCreatingUser" class="user-management-container">
   <h2>User List</h2>
   <div class="filter-container">
-    Filter by Role:
+    <label for="roleFilter">Filter by Role:</label>
     <select id="roleFilter" [(ngModel)]="selectedrole" (change)="loadUsersByRole()">
       <option value="">All</option>
       <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
     </select>
-    <div style="gap: 10px; width: 120px; margin-right: 0px;">
+    <div class="add-user-wrapper">
       <a (click)="isCreatingUser = true" class="add-user-btn">
       <i>➕</i> Add New
     </a>
@@ -17,7 +17,7 @@
   <table>
     <thead>
       <tr>
-      <th style="width: 25%;">UserId</th>
+      <th style="width: 26%;">UserId</th>
       <th style="width: 20%;">Name</th>
       <th style="width: 20%;">Username</th>
       <th style="width: 15%;">Role</th>
@@ -40,10 +40,11 @@
 </div>
 
 <!-- Create New User Form -->
-<div *ngIf="isCreatingUser" class="modal">
-    <span class="close" (click)="isCreatingUser = false">&times;</span>
+<div *ngIf="isCreatingUser" class="modal-container" >
+  <span class=" create-close" (click)="isCreatingUser = false">&times;</span>
+  <div class="custom-modal">
     <h2>Create New User</h2> 
-    <form (submit)="isCreatingUser">
+    <form (ngSubmit)="onSubmit()">
       <div>
         <label for="fullName">Full Name:</label>
         <input type="text" id="fullName" [(ngModel)]="user.fullName" name="fullName" required />
@@ -61,7 +62,7 @@
 
       <div>
         <label for="role">Role:</label>
-        <select id="role" [(ngModel)]="user.usertype" name="role" required>
+        <select id="role" [(ngModel)]="user.role" name="role" required>
           <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
         </select>
       </div>
@@ -69,21 +70,27 @@
       <button type="submit">Create User</button>
       <button type="button" (click)="isCreatingUser = false">Cancel</button>
     </form>
-  
-</div>
 
-<!-- User Details Modal -->
-<div *ngIf="selectedUser" class="modal-container">
-  <div class="modal">
-    <span class="close" (click)="selectedUser = null">&times;</span>
-    <h2>User Details</h2>
-    <p><strong>User ID:</strong> {{ selectedUser.userId }}</p>
-    <p><strong>Name:</strong> {{ selectedUser.fullName }}</p>
-    <p><strong>Username:</strong> {{ selectedUser.username }}</p>
-    <p><strong>Role:</strong> {{ selectedUser.userType }}</p>
-    <p><strong>RegNumber:</strong> {{ selectedUser.regNumber }}</p>
-    <p><strong>PhoneNumber:</strong> {{ selectedUser.phoneNumber }}</p>
-    <p><strong>Enrollment Date:</strong> {{ selectedUser.enrollmentDate }}</p>
-    <button (click)="selectedUser = null">Close</button>
+
   </div>
+    
+</div>
+ 
+<div *ngIf="selectedUser" class="modal-container">
+  <div class="modal-box">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h2>User Info</h2>
+
+    <!-- Display real data -->
+    <p><strong>UserId:</strong> {{ selectedUser.userId }}</p>
+    <p><strong>Username:</strong> {{ selectedUser.username }}</p>
+    <p><strong>Full Name:</strong> {{ selectedUser.fullName }}</p>
+    <p><strong>Email:</strong> {{ selectedUser.email }}</p>
+    <p><strong>Phone:</strong> {{ selectedUser.phoneNumber }}</p>
+    <p><strong>Reg Number:</strong> {{ selectedUser.regNumber }}</p>
+    <p><strong>Role:</strong> {{ selectedUser.userType }}</p>
+
+
+  </div>
+  
 </div>

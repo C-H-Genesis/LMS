@@ -58,8 +58,17 @@ export class StudentService {
     return this.http.post(`http://localhost:5183/api/uploadAssignmentFile`, formData);
   }
 
-  submitWrittenAssignment(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/submitWrittenAssignment`, data);
+  getAssignmentsByCourse(): Observable<any[]> {
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<any[]>(`${this.apiUrl}/Assignments`,{ headers });
+  }
+
+   postSubmission(StudentSubmissionDto : any): Observable<any> {
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    
+    return this.http.post<any>(`${this.apiUrl}PostSubmission`, StudentSubmissionDto, { headers });
   }
 
 }

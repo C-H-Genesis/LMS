@@ -4,3 +4,15 @@ html, body {
     padding: 0;
     width: 100%;
 }
+
+a[cNavLink] {
+    color: #343a40;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  a[cNavLink]:hover {
+    font-weight: 500;
+  }
+  
+  

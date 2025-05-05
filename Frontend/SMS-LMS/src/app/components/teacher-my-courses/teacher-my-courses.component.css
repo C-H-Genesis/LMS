@@ -1,49 +1,89 @@
 .teacher-dashboard {
-    display: flex;
-    flex-direction: row;
-  }
-  
-  .sidebar {
-    width: 35%;
-    padding: 1rem;
-    background-color: #f9f9f9;
-    border-right: 1px solid #ddd;
-  }
-  
-  .main-content {
-    flex-grow: 1;
-    padding: 1rem;
-  }
-  
-  .courses-table,
-  .students-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-  }
-  
-  .courses-table th,
-  .students-table th,
-  .courses-table td,
-  .students-table td {
-    border: 1px solid #ddd;
-    padding: 0.75rem;
-    text-align: left;
-  }
-  
-  .courses-table th,
-  .students-table th {
-    background-color: #f2f2f2;
-  }
-  
-  .courses-table tr:hover,
-  .students-table tr:hover {
-    background-color: #f5f5f5;
-    cursor: pointer;
-  }
-  
-  .selected {
-    background-color: #007bff;
-    color: white;
-  }
-  
+  display: flex;
+  gap: 40px;
+  padding: 30px;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  flex: 1;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.courses-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.courses-table th, .courses-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.courses-table tr:hover {
+  background-color: #f0f8ff;
+  cursor: pointer;
+}
+
+.selected {
+  background-color: #e0f7fa !important;
+}
+
+/* Main Content Styling */
+.main-content {
+  flex: 2;
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.course-code-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.course-code-input input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  flex: 1;
+}
+
+.course-code-input button {
+  padding: 8px 12px;
+  background-color: #004b9a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.course-code-input button:hover {
+  background-color: #003970;
+}
+
+/* Student Table Styling */
+.students-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.students-table th, .students-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Error Styling */
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+}

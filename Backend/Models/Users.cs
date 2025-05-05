@@ -1,5 +1,6 @@
 using RoleModel;
 using EnrollmentModel;
+using UserRoles;
 
 namespace UsersModel{
     public class User
@@ -15,8 +16,10 @@ namespace UsersModel{
     
 
     // Navigation Properties
-    
-    public Role? Role { get; set; }
+
+    public ICollection<Role> Roles { get; set; } = new List<Role>();
+    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
     public ICollection<Enrollment>? Enrollments { get; set; }  = new List<Enrollment>();
     
 }

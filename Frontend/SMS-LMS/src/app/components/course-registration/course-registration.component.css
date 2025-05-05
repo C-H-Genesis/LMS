@@ -115,6 +115,19 @@ label {
   justify-content: space-between;
   align-items: center;
 }
+.register-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #0f0f0f;
+  font-weight: bold;
+}
+
+.register-close:hover {
+  color: #d00;
+}
 
 .modal-buttons {
   display: flex;

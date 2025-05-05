@@ -16,11 +16,16 @@ export class TeacherAssignmentsComponent {
   WrittenAssignment: string ='';
   dueDate: string = '';
   selectedFile: File | undefined;
+  showModal = false;
+  loadAssignments: any[] = [];
+  selectedAssignment: any = null; // To track which assignment user clicked
+  assignmentAnswer: string = "";
 
   constructor(private assignmentService: TeacherService) {}
 
   ngOnInit() {
     this.loadTeacherCourses();
+    this.uploadedAssignments();
   }
 
   // Fetch courses assigned to the teacher
@@ -36,8 +41,12 @@ export class TeacherAssignmentsComponent {
   }
 
   // Handle file selection
-  onFileSelected(event: any) {
+  onFileSelected(event: any)  {
     this.selectedFile = event.target.files[0];
+  }
+
+  openModal() {
+    this.showModal = true;
   }
 
   // Submit assignment
@@ -46,6 +55,8 @@ export class TeacherAssignmentsComponent {
       alert('Please select a course');
       return;
     }
+    console.log(this.courses); // Should contain valid course ids
+
 
     if (this.selectedFile) {
       // First upload the file
@@ -108,4 +119,38 @@ export class TeacherAssignmentsComponent {
       });
     }
   }
+
+
+  uploadedAssignments (){
+    this.assignmentService.getAssignmentsByTeacher().subscribe({
+      next : (data : any) => {
+        this.loadAssignments = data;
+      },
+      error: (err) => {
+        console.error("Error Fetching Assignments");
+      }
+    })
+  }
+
+  closeModal() {
+    this.showModal = false;
+  }
+
+  viewAssignment(assignment: any) {
+    // 🔥 Very important check
+    if (assignment.fileUrl && assignment.fileUrl !== "string" && assignment.fileUrl.trim() !== "") {
+      window.open(assignment.fileUrl, "_blank"); // open file
+    } 
+    else if (assignment.writtenAssignment && assignment.writtenAssignment.trim() !== "") {
+      this.selectedAssignment = assignment; // show written assignment
+    }
+  }
+  
+  
+
+  closeAssignment() {
+    this.selectedAssignment = null;
+  }
+  
+
 }

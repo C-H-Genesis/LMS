@@ -1,6 +1,7 @@
 
 using EnrollmentModel;
 using UsersModel;
+using AssignmentModel;
 
 namespace CourseModel
 {
@@ -13,7 +14,8 @@ namespace CourseModel
         
         public User? User { get; set; }
         public required ICollection<Enrollment> Enrollments { get; set; }  = new List<Enrollment>();
-
+        public required ICollection<Assignments> Assignments { get; set; } 
+ 
         
     }
 

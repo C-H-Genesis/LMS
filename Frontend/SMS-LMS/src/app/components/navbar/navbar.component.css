@@ -1,3 +1,29 @@
+.custom-navbar {
+  background-color: #12438b !important; /* change this to any background color you like */
+}
+
+.custom-navbar a {
+  color: white !important;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.custom-navbar a:hover {
+  color: #0c0c0c !important; /* or any hover color */
+}
+
+.custom-navbar c-navbar-brand,
+.custom-navbar .navbar-brand {
+  color: white !important;
+  font-weight: bold; /* optional */
+  text-decoration: none;
+}
+
+.custom-navbar c-navbar-brand:hover,
+.custom-navbar .navbar-brand:hover {
+  color: #0e0d0d !important; /* match your link hover color */
+}
+
 /* Optional: Smooth navbar toggle transition */
 .navbar-collapse {
   transition: all 0.3s ease-in-out;
@@ -17,22 +43,14 @@ a.c-nav-link.router-link-active {
 
 /* Optional: On hover */
 a.c-nav-link:hover {
-  text-decoration: underline;
-  color: #96a4b9;
+  color: #e61fdc;
 }
 
 /* Ensure navbar-brand spacing is consistent */
 c-navbar-brand {
   font-weight: bold;
   font-size: 1.25rem;
-}
-
-ul  {
-  padding: 0px 300px;
-  display: flex;
-  margin-left: auto;
-  float: right;
-  word-spacing: 2px;
+  margin-right: 2rem;
 }
 
 /* Adjust toggle button on smaller screens */
@@ -45,3 +63,32 @@ ul  {
 .logout-button {
   margin-left: auto;
 }
+
+.nav-link {
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+  padding-bottom: 5px;
+}
+
+.nav-link:hover {
+  color: #4a00e0; /* any color you like */
+  border-bottom: 2px solid #4a00e0;
+}
+
+.logout-btn {
+  background-color: #6f42c1 !important;
+  color: #fff !important;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #5a35a0 !important;
+}
+
+.active-link {
+  font-weight: bold;
+  border-bottom: 2px solid #6f42c1;
+}
+

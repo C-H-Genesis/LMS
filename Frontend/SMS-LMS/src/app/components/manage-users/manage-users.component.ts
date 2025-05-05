@@ -38,9 +38,11 @@ export class ManageUsersComponent implements OnInit {
       this.users = data;
     });
   }
+  openModal() {  
+    this.showModal = true;
+  }
 
   loadUsersById(userId: string) {
-    console.log("Fetching user with ID:", userId);
     this.adminService.getAllUsersById(userId).subscribe((data: any) => {
       this.selectedUser = data; // Store the selected user's details
     }, (error) => {
@@ -117,6 +119,7 @@ export class ManageUsersComponent implements OnInit {
   
   closeModal() {
     this.showModal = false;
+    this.selectedUser = null;
   }
   
 }

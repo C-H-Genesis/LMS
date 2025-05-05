@@ -139,12 +139,31 @@ input {
   width: 400px;
   border-radius: 10px;
   z-index: 1001;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
+}
+.create-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #fcfafa;
+  font-weight: bold;
 }
 
 /* Modal Form Styling */
 .modal-content {
-  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  border: none;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  width: 400px;
+  border-radius: 10px;
+  z-index: 1001;
+  box-shadow: none;
 }
 
 .modal-content h3 {
