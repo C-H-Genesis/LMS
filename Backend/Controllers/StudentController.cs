@@ -71,72 +71,72 @@ public async Task<IActionResult> GetProfile()
 
 
         // Update student's profile
-        [HttpPut("profile")]
-public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateUserDto)
-{
-    var userId = User.Claims
-        .FirstOrDefault(c => c.Type == "UserId")?.Value;
-
-    if (string.IsNullOrEmpty(userId))
-    {
-        return Unauthorized("User is not authenticated.");
-    }
-
-    // Fetch the user (which could be a Student, Teacher, etc.)
-    var user = await _context.Users
-        .FirstOrDefaultAsync(u => u.UserId.ToString() == userId);
-
-    if (user == null)
-    {
-        return NotFound("User not found.");
-    }
-
-    // Check if the user is a student and fetch the Student-specific details
-    if (user is Student student)
-    {
-        if (!string.IsNullOrEmpty(updateUserDto.UserName))  // Check for non-empty string
+                [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateUserDto)
         {
-            user.Username = updateUserDto.UserName;  // Update Username in Users table
+            var userId = User.Claims
+                .FirstOrDefault(c => c.Type == "UserId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User is not authenticated.");
+            }
+
+            // Fetch the user (which could be a Student, Teacher, etc.)
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.UserId.ToString() == userId);
+
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Check if the user is a student and fetch the Student-specific details
+            if (user is Student student)
+            {
+                if (!string.IsNullOrEmpty(updateUserDto.UserName))  // Check for non-empty string
+                {
+                    user.Username = updateUserDto.UserName;  // Update Username in Users table
+                }
+
+                if (!string.IsNullOrEmpty(updateUserDto.FullName))  // Check for non-empty string
+                {
+                    user.FullName = updateUserDto.FullName;  // Update FullName in Users table
+                }
+
+                if (!string.IsNullOrEmpty(updateUserDto.Email))  // Check for non-empty string
+                {
+                    user.Email = updateUserDto.Email;  // Update Email in Users table
+                }
+
+                if (!string.IsNullOrEmpty(updateUserDto.PhoneNumber))  // Check for non-empty string
+                {
+                    user.PhoneNumber = updateUserDto.PhoneNumber;  // Update PhoneNumber in Users table
+                }
+
+                if (!string.IsNullOrEmpty(updateUserDto.RegNumber))  // Check for non-empty string
+                {
+                    student.RegNumber = updateUserDto.RegNumber;  // Update RegNumber in Student (same table)
+                }
+
+                // Save changes
+                _context.Users.Update(user);    // Update Users table
+                await _context.SaveChangesAsync();
+
+                var updatedUserInfo = new
+                {
+                    user.Username,
+                    user.FullName,
+                    student.RegNumber, // Access RegNumber from the Student class
+                    user.PhoneNumber,
+                    user.Email
+                };
+
+                return Ok(updatedUserInfo);
+            }
+
+            return BadRequest("User is not a student.");
         }
-
-        if (!string.IsNullOrEmpty(updateUserDto.FullName))  // Check for non-empty string
-        {
-            user.FullName = updateUserDto.FullName;  // Update FullName in Users table
-        }
-
-        if (!string.IsNullOrEmpty(updateUserDto.Email))  // Check for non-empty string
-        {
-            user.Email = updateUserDto.Email;  // Update Email in Users table
-        }
-
-        if (!string.IsNullOrEmpty(updateUserDto.PhoneNumber))  // Check for non-empty string
-        {
-            user.PhoneNumber = updateUserDto.PhoneNumber;  // Update PhoneNumber in Users table
-        }
-
-        if (!string.IsNullOrEmpty(updateUserDto.RegNumber))  // Check for non-empty string
-        {
-            student.RegNumber = updateUserDto.RegNumber;  // Update RegNumber in Student (same table)
-        }
-
-        // Save changes
-        _context.Users.Update(user);    // Update Users table
-        await _context.SaveChangesAsync();
-
-        var updatedUserInfo = new
-        {
-            user.Username,
-            user.FullName,
-            student.RegNumber, // Access RegNumber from the Student class
-            user.PhoneNumber,
-            user.Email
-        };
-
-        return Ok(updatedUserInfo);
-    }
-
-    return BadRequest("User is not a student.");
-}
 
 
         // Register for a course using Course Code
@@ -255,6 +255,19 @@ public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updat
             // Get assignments for all enrolled courses
             var assignments = await _context.Assignment
                 .Where(a => enrolledCourses.Contains(a.CourseId))
+                .Select(a => new 
+                    {
+                        Id = a.Id,
+                        Title = a.Title,
+                        Description = a.Description,
+                        DueDate = a.DueDate,
+                        FileUrl = a.FileUrl,
+                        CreatedAt = a.CreatedAt,
+                        CourseId = a.CourseId,
+                        CourseName = a.Course != null ? a.Course.CourseName : null,
+                        TeacherId = a.TeacherId,
+                        WrittenAssignment = a.WrittenAssignment
+                    })
                 .ToListAsync();
 
             if (assignments == null || !assignments.Any())

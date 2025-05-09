@@ -26,7 +26,9 @@ import { CollapseModule } from '@coreui/angular';
 import { NavbarModule } from '@coreui/angular';
 import { NavModule } from '@coreui/angular';
 import { ButtonModule } from '@coreui/angular';
-import { SharedModule } from '@coreui/angular'; // For <c-container>
+import { SharedModule } from '@coreui/angular';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component'; // For <c-container>
 
 
 
@@ -52,6 +54,8 @@ import { SharedModule } from '@coreui/angular'; // For <c-container>
     ReportsComponent,
     StudentAssignmentComponent,
     LearningDashboardComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
     
   ],
   imports: [

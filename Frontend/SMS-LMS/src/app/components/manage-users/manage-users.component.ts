@@ -18,7 +18,7 @@ export class ManageUsersComponent implements OnInit {
     userId : '', 
     fullName: '',
     username: '',
-    password: '',
+    Email:'',
     role: '',
     usertype: '',
   };

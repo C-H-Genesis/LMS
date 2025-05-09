@@ -1,28 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\lms\\backend\\SMS.csproj": {}
+    "D:\\New folder\\LMS\\LMS\\backend\\SMS.csproj": {}
   },
   "projects": {
-    "D:\\lms\\backend\\SMS.csproj": {
+    "D:\\New folder\\LMS\\LMS\\backend\\SMS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\lms\\backend\\SMS.csproj",
+        "projectUniqueName": "D:\\New folder\\LMS\\LMS\\backend\\SMS.csproj",
         "projectName": "SMS",
-        "projectPath": "D:\\lms\\backend\\SMS.csproj",
-        "packagesPath": "C:\\Users\\Haston\\.nuget\\packages\\",
-        "outputPath": "D:\\lms\\backend\\obj\\",
+        "projectPath": "D:\\New folder\\LMS\\LMS\\backend\\SMS.csproj",
+        "packagesPath": "C:\\Users\\SOOQ ELASER\\.nuget\\packages\\",
+        "outputPath": "D:\\New folder\\LMS\\LMS\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Haston\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\SOOQ ELASER\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -49,6 +46,10 @@
             "BCrypt.Net-Next": {
               "target": "Package",
               "version": "[4.0.3, )"
+            },
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.12.0, )"
             },
             "Microsoft.AspNetCore.Authentication": {
               "target": "Package",
@@ -124,7 +125,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.408/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

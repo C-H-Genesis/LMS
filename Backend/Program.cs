@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using ApplicationDbContext;
+using EmailAuth;
+using EmailModel;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<SMSDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));    
+
+builder.Services.AddScoped<EmailService>();
+
 
 
 builder.Services.AddAuthentication(options =>

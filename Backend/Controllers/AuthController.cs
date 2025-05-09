@@ -18,6 +18,11 @@ using ApplicationDbContext;
 using LoginDTO;
 using RegisterDTO;
 using CourseModel;
+using EmailAuth;
+using System.Security.Cryptography;
+using ResetPasswordDTO;
+using ForgotPasswordDTO;
+
 
 namespace AuthController
 {
@@ -26,10 +31,12 @@ namespace AuthController
     public class AuthController : ControllerBase
     {
         private readonly SMSDbContext _context;
+        private readonly EmailService _emailService;
 
-        public AuthController(SMSDbContext context)
+        public AuthController(SMSDbContext context, EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         // Registration Method
@@ -50,7 +57,8 @@ namespace AuthController
             }
 
             // Hash the password
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            string generatedPassword = PasswordGenerator.GeneratePassword(12);
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
 
             // Create the user with a UserType based on the role
             User user = request.Role switch
@@ -63,7 +71,8 @@ namespace AuthController
                     PasswordHash = hashedPassword,
                     RoleId = role.RoleId,
                     UserType = "Student",
-                    EnrollmentDate = DateTime.UtcNow
+                    EnrollmentDate = DateTime.UtcNow,
+                    Email = request.Email
                 },
                 "Admin" => new Admin
                 {
@@ -72,8 +81,8 @@ namespace AuthController
                     Username = request.Username,
                     PasswordHash = hashedPassword,
                     RoleId = role.RoleId,
-                    UserType = "Admin",
-                    
+                    Email = request.Email,
+                    UserType = "Admin"
                 },
                 "Finance" => new Finance
                 {
@@ -82,8 +91,8 @@ namespace AuthController
                     Username = request.Username,
                     PasswordHash = hashedPassword,
                     RoleId = role.RoleId,
-                    UserType = "Finance",
-                   
+                    Email = request.Email,
+                    UserType = "Finance"
                 },
                 "Teacher" => new Teacher
                 {
@@ -92,11 +101,10 @@ namespace AuthController
                     Username = request.Username,
                     PasswordHash = hashedPassword,
                     RoleId = role.RoleId,
-                    UserType = "Teacher",
-                    
-                    
+                    Email = request.Email,
+                    UserType = "Teacher"
                 },
-                _  => throw new ArgumentException("Invalid role specified.")
+                _ => throw new ArgumentException("Invalid role specified.")
             };
 
             if (user == null)
@@ -113,14 +121,33 @@ namespace AuthController
                 UserId = user.UserId,
                 RoleId = role.RoleId
             };
-           await  _context.UserRoles.AddAsync(userRole);
+            await _context.UserRoles.AddAsync(userRole);
 
             // Save changes
             var save = await _context.SaveChangesAsync();
 
             if (save > 0)
             {
-                return Ok(new { message = "Registration successful." });
+                // ✅ Send welcome email
+                try
+                {
+                    string subject = "Welcome to SMS-LMS Platform";
+                    string body = $"Hi {request.FullName},\n\n" +
+                                $"You have successfully registered as a {request.Role}.\n" +
+                                $"Your username is: {request.Username}\n" +
+                                $"Your temporary password is: {generatedPassword}\n\n" +
+                                "Please change your password after logging in.\n\nThank you for joining our platform.";
+                                        
+
+                    await _emailService.SendEmailAsync(request.Email, subject, body); // Assuming Username is the email
+                }
+                catch (Exception ex)
+                {
+                    // Log or handle email errors if needed
+                    Console.WriteLine($"Email send failed: {ex.Message}");
+                }
+
+                return Ok(new { message = "Registration successful and email sent." });
             }
             else
             {
@@ -131,6 +158,7 @@ namespace AuthController
                 });
             }
         }
+
 
         // Login Method
         [HttpPost("login")]
@@ -163,6 +191,65 @@ namespace AuthController
 
         }
 
+        //            Reset Password             //
+
+                [HttpPost("reset-password")]
+                public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+                {
+                    var trimmedToken = request.Token?.Trim();
+
+                    var user = await _context.Users.FirstOrDefaultAsync(u =>
+                        u.Email == request.Email &&
+                        u.PasswordResetToken == trimmedToken &&
+                        u.ResetTokenExpiry > DateTime.UtcNow);
+   
+
+                    if (user == null)
+                        return BadRequest("Invalid or expired reset token.");
+
+                    // Hash and set the new password
+                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+
+                    // Clear token fields
+                    user.PasswordResetToken = null;
+                    user.ResetTokenExpiry = null;
+
+                    await _context.SaveChangesAsync();
+
+                    return Ok(new { message = "Your password has been reset successfully."});
+                }
+
+
+        //               Forgot Password                 //
+                    [HttpPost("forgot-password")]
+            public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+            {
+                if (string.IsNullOrWhiteSpace(request.Email))
+                    return BadRequest("Email is required.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (user == null)
+                    return NotFound("No user associated with this email.");
+
+                // Generate reset token
+                var resetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+                user.PasswordResetToken = resetToken;
+                user.ResetTokenExpiry = DateTime.UtcNow.AddHours(1); // Token valid for 1 hour
+
+                await _context.SaveChangesAsync();
+
+                // Send reset link
+                var encodedToken = Uri.EscapeDataString(resetToken);
+                var resetLink = $"http://localhost:4200/reset-password?token={encodedToken}&email={request.Email}";
+                var subject = "Password Reset Request";
+                var body = $"Hi {user.FullName},\n\nClick the link below to reset your password:\n{resetLink}\n\nIf you didn’t request this, ignore this email.";
+
+                await _emailService.SendEmailAsync(user.Email, subject, body);
+
+                return Ok(new { message = "Password reset link has been sent to your email."});
+            }
+
+
         // Token generation method (unchanged)
             private string GenerateToken(User user)
         {
@@ -189,7 +276,7 @@ namespace AuthController
 
             foreach (var role in user.Roles)
             {
-                claims.Add(new Claim("Role", role.RoleName));
+                claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ThisisYourSecretKeyHereof32bytes"));
@@ -206,6 +293,32 @@ namespace AuthController
         }
     }
 
+
+            public class PasswordGenerator
+        {
+            public static string GeneratePassword(int length = 12)
+            {
+                const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_=+";
+                
+                if (length <= 0)
+                    throw new ArgumentException("Password length must be greater than 0.");
+
+                var chars = new char[length];
+                using (var rng = RandomNumberGenerator.Create())
+                {
+                    byte[] uintBuffer = new byte[sizeof(uint)];
+
+                    for (int i = 0; i < length; i++)
+                    {
+                        rng.GetBytes(uintBuffer);
+                        uint num = BitConverter.ToUInt32(uintBuffer, 0);
+                        chars[i] = valid[(int)(num % (uint)valid.Length)];
+                    }
+                }
+
+                return new string(chars);
+            }
+        }
 }
 
 

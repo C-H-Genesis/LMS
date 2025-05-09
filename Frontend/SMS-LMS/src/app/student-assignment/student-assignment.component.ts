@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StudentService } from '../services/student.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
     selector: 'app-student-assignment',
@@ -9,80 +10,145 @@ import { StudentService } from '../services/student.service';
     standalone: false
 })
 export class StudentAssignmentComponent {
-  assignmentForm: FormGroup;
-  isFileUpload = false;
-  selectedFile: File | null = null;
-  selectedAssignment: any = null;
   assignments: any[] = [];
   loadingAssignments = false;
-  errorMessage: string = '';
+  errorMessage = '';
+  submitError = '';
+  submitSuccess = '';
+  selectedAssignment: any = null;
+  showModal = true;
+  assignmentForm!: FormGroup;
+  isFileUpload = false;
+  selectedFile: File | null = null;
 
-  ngOnInit(){
+  constructor(
+    private fb: FormBuilder,
+    private submissionService: StudentService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
     this.loadAssignments();
+
+    this.assignmentForm = this.fb.group({
+      assignmentId: [''],
+      courseId: [''],
+      course: ['', Validators.required],
+      userId: [''], // populated from token
+      fileUrl: [''],
+      writtenAssignment: [''],
+      submittedAt: [new Date().toISOString().substring(0, 16), Validators.required],
+    });
   }
 
-  constructor(private fb: FormBuilder, private assignmentService: StudentService) {
-    this.assignmentForm = this.fb.group({
-      course: [''],
-      writtenAssignment: [''],
-      dueDate: ['']
+  loadAssignments() {
+    this.loadingAssignments = true;
+    this.submissionService.getAssignmentsByCourse().subscribe({
+      next: (data) => {
+        this.assignments = data;
+        this.loadingAssignments = false;
+      },
+      error: (err) => {
+        this.errorMessage = err.error || 'Failed to load assignments.';
+        this.loadingAssignments = false;
+      }
     });
+  }
+
+  selectAssignment(assignment: any) {
+    this.selectedAssignment = assignment;
+    this.assignmentForm.patchValue({
+      assignmentId: assignment.id,
+      courseId: assignment.courseId,
+      course: assignment.courseName,
+      userId: this.getUserIdFromToken(),
+      submittedAt: new Date().toISOString().substring(0, 16)
+    });
+
+    this.submitSuccess = '';
+    this.submitError = '';
+    this.selectedFile = null;
+    this.isFileUpload = false;
+  }
+
+  cancelSelection() {
+    this.selectedAssignment = null;
+    this.assignmentForm.reset();
+    this.selectedFile = null;
+    this.isFileUpload = false;
+  }
+
+  toggleUploadMode() {
+    this.isFileUpload = !this.isFileUpload;
+    if (this.isFileUpload) {
+      this.assignmentForm.get('writtenSubmission')?.setValue('');
+    } else {
+      this.selectedFile = null;
+    }
   }
 
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
   }
 
-  toggleUploadMode() {
-    this.isFileUpload = !this.isFileUpload;
-    if (this.isFileUpload) {
-      this.assignmentForm.get('writtenAssignment')?.setValue('');
-    } else {
-      this.selectedFile = null;
-    }
-  }
-
   submitAssignment() {
+    const formData = this.assignmentForm.value;
+
+    // Validate presence of content
+    if (this.isFileUpload && !this.selectedFile) {
+      this.submitError = 'Please select a file to upload.';
+      return;
+    }
+
+    if (!this.isFileUpload && !formData.writtenSubmission?.trim()) {
+      this.submitError = 'Please provide a written submission.';
+      return;
+    }
+
+    // Handle file upload
     if (this.isFileUpload && this.selectedFile) {
-      this.assignmentService.uploadAssignmentFile(this.selectedFile, this.assignmentForm.value.course, this.assignmentForm.value.dueDate).subscribe(response => {
-        console.log('File uploaded successfully', response);
+      this.submissionService.uploadAssignmentFile(
+        this.selectedFile,
+        formData.assignmentId,
+        formData.courseId
+      ).subscribe({
+        next: (response) => {
+          formData.fileUrl = response.fileUrl;
+          this.submitFinal(formData);
+        },
+        error: (err) => {
+          this.submitError = err.error || 'File upload failed.';
+        }
       });
     } else {
-      this.assignmentService.postSubmission(this.assignmentForm.value).subscribe(response => {
-        console.log('Written assignment submitted successfully', response);
-      });
+      this.submitFinal(formData);
     }
   }
 
-  loadAssignments(): void {
-    this.loadingAssignments = true;
-    this.assignmentService.getAssignmentsByCourse().subscribe(
-      data => {
-        this.assignments = data;
-        this.loadingAssignments = false;
+  submitFinal(formData: any) {
+    this.submissionService.postSubmission(formData).subscribe({
+      next: () => {
+        this.submitSuccess = 'Assignment submitted successfully!';
+        this.submitError = '';
+        this.cancelSelection();
       },
-      error => {
-        this.errorMessage = error.message;
-        this.loadingAssignments = false;
+      error: (err) => {
+        this.submitError = err.error || 'Submission failed.';
+        this.submitSuccess = '';
       }
-    );
+    });
   }
 
-  viewAssignment(assignment: any): void {
-    if (assignment.fileUrl && assignment.fileUrl !== "string" && assignment.fileUrl.trim() !== "") {
-      window.open(assignment.fileUrl, "_blank"); // Open file in a new tab
-    } 
-    else if (assignment.writtenAssignment && assignment.writtenAssignment.trim() !== "") {
-      this.selectedAssignment = assignment; // Show written assignment
-    }
+  getUserIdFromToken() {
+    return this.authService.getToken();
+  }
+
+  closeModal() {
+    this.showModal = false;
+  }
   }
 
   
   
 
-  closeAssignment() {
-    this.selectedAssignment = null;
-  }
-
-
-}
+ 

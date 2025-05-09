@@ -13,6 +13,9 @@ namespace UsersModel{
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
     public string? UserType { get; set; }
+    public string? PasswordResetToken { get; set; }
+    public DateTime? ResetTokenExpiry { get; set; }
+
     
 
     // Navigation Properties

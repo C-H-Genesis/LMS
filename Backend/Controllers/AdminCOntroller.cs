@@ -19,7 +19,8 @@ using StudentModel;
 using UpdateProfile;
 using UpdateUserInfoDto;
 using AssignmentModel;
-
+using AuthController;
+using EmailAuth;
 
 namespace AdminController
 {
@@ -30,10 +31,12 @@ namespace AdminController
     public class AdminController : ControllerBase
     {
         private readonly SMSDbContext _context;
+        private readonly EmailService _emailService;
 
-        public AdminController(SMSDbContext context)
+        public AdminController(SMSDbContext context, EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         [HttpGet("users")]
@@ -46,7 +49,7 @@ namespace AdminController
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
-            Console.WriteLine($"API received request for user ID: {id}");
+            
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
             if (user == null) return NotFound();
             return Ok(user);
@@ -57,15 +60,15 @@ namespace AdminController
         {
                     // Query the Users table for users with the specified role
                     var users = await _context.Users
-                .Where(u => u.UserType == role)
-                .ToListAsync();
+                    .Where(u => u.UserType == role)
+                    .ToListAsync();
 
                     // Check if any users were found
                     if (users == null ) 
-                return NotFound($"No users found with the role: {role}");
+                    return NotFound($"No users found with the role: {role}");
 
-            // Return the list of users
-            return Ok(users);
+                    // Return the list of users
+                    return Ok(users);
         }
 
        [HttpPut("profile/{userId}")]
@@ -211,7 +214,8 @@ namespace AdminController
             }
 
             // Hash the password
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+           string generatedPassword = PasswordGenerator.GeneratePassword(12);
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
 
             // Create the user entity based on the role
             User user = request.Role switch
@@ -222,6 +226,7 @@ namespace AdminController
                     FullName = request.FullName,
                     Username = request.Username,
                     PasswordHash = hashedPassword,
+                    Email = request.Email,
                     RoleId = role.RoleId,
                     UserType = "Student",
                     EnrollmentDate = DateTime.UtcNow
@@ -232,6 +237,7 @@ namespace AdminController
                     FullName = request.FullName,
                     Username = request.Username,
                     PasswordHash = hashedPassword,
+                    Email = request.Email,
                     RoleId = role.RoleId,
                     UserType = "Admin",
                 },
@@ -241,6 +247,7 @@ namespace AdminController
                     FullName = request.FullName,
                     Username = request.Username,
                     PasswordHash = hashedPassword,
+                    Email = request.Email,
                     RoleId = role.RoleId,
                     UserType = "Finance",
                 },
@@ -250,6 +257,7 @@ namespace AdminController
                     FullName = request.FullName,
                     Username = request.Username,
                     PasswordHash = hashedPassword,
+                    Email = request.Email,
                     RoleId = role.RoleId,
                     UserType = "Teacher",
                 },
@@ -272,10 +280,27 @@ namespace AdminController
 
             // Save changes to the database
             var saveResult = await _context.SaveChangesAsync();
-            if (saveResult > 0)
+           if (saveResult > 0)
             {
-                return Ok(new { Message = "User created successfully." });
+                string emailBody = $@"
+                    Hello {request.FullName},
+
+                    Your account has been successfully created.
+
+                    Login Details:
+                    Username: {request.Username}
+                    Password: {generatedPassword}
+
+                    Please log in and change your password immediately.
+
+                    Regards,
+                    School Management System";
+
+                await _emailService.SendEmailAsync(request.Email, "Your New Account Details", emailBody);
+
+                return Ok(new { Message = "User created successfully and email sent." });
             }
+
 
             return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails
             {

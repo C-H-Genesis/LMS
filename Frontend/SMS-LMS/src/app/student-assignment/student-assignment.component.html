@@ -1,81 +1,71 @@
-<div *ngIf="loadingAssignments">Loading assignments...</div>
+<div class="page-container">
 
-<div *ngIf="errorMessage" class="error">
-  <p>{{ errorMessage }}</p>
-</div>
+  <!-- Assignment Table (no modal here anymore) -->
+  <div class="table-container" *ngIf="assignments.length > 0">
+    <h2>Available Assignments</h2>
+    <div *ngIf="loadingAssignments">Loading assignments...</div>
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
 
-<div *ngIf="assignments.length > 0">
-  <div *ngFor="let assignment of assignments">
-    <div (click)="viewAssignment(assignment)">
-      <h3>{{ assignment.name }}</h3>
-      <p>{{ assignment.description }}</p>
+    <table class="assignment-table">
+      <thead>
+        <tr>
+          <th>Course</th>
+          <th>Title</th>
+          <th>Created At</th>
+          <th>Due Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let assignment of assignments">
+          <td>{{ assignment.courseName || 'N/A' }}</td>
+          <td>
+            <span (click)="selectAssignment(assignment)" style="color:blue; cursor:pointer; text-decoration:underline;">
+              {{ assignment.title || assignment.name }}
+            </span>
+          </td>
+          <td>{{ assignment.createdAt | date: 'short' }}</td>
+          <td>{{ assignment.dueDate | date }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-      <!-- Display Written Assignment -->
-      <div *ngIf="assignment.writtenAssignment && assignment.writtenAssignment.trim()">
-        <h4>Written Assignment:</h4>
-        <p>{{ assignment.writtenAssignment }}</p>
-      </div>
+  <div *ngIf="assignments.length === 0 && !loadingAssignments">
+    <p>No assignments found.</p>
+  </div>
 
-      <!-- Display File Assignment -->
-      <div *ngIf="assignment.fileUrl && assignment.fileUrl.trim()">
-        <h4>Assignment File:</h4>
-        <a [href]="assignment.fileUrl" target="_blank">View File</a>
-      </div>
-      
-      <!-- Optionally Display Images if the assignment is a design -->
-      <div *ngIf="assignment.designUrl && assignment.designUrl.trim()">
-        <h4>Design:</h4>
-        <img [src]="assignment.designUrl" alt="Student Design" class="assignment-design">
-      </div>
+  <!-- Modal now wraps the Submission Form -->
+  <div class="modal" *ngIf="showModal && selectedAssignment">
+    <div class="modal-content submission-container">
+      <span class="close-btn" (click)="closeModal()">×</span>
+      <h3>Submit Assignment: {{ selectedAssignment.title || selectedAssignment.name }}</h3>
+
+      <form [formGroup]="assignmentForm" (ngSubmit)="submitAssignment()">
+        <div class="form-group">
+          <label>Course</label>
+          <input type="text" formControlName="course" [value]="selectedAssignment.courseName || ''" readonly>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" (change)="toggleUploadMode()" /> Upload File Instead of Writing
+          </label>
+        </div>
+
+        <div class="form-group" *ngIf="isFileUpload">
+          <label>Select File</label>
+          <input type="file" (change)="onFileSelected($event)" />
+        </div>
+
+        <div class="form-group" *ngIf="!isFileUpload">
+          <label>Written Submission</label>
+          <textarea rows="5" formControlName="writtenAssignment" placeholder="Write your response here..."></textarea>
+        </div>
+
+        <button type="submit" [disabled]="!isFileUpload && assignmentForm.get('writtenAssignment')?.value.trim() === ''">Submit</button>
+        <button type="button" (click)="cancelSelection()">Cancel</button>
+        
+      </form>
     </div>
   </div>
 </div>
-
-<div *ngIf="assignments.length === 0 && !loadingAssignments">
-  <p>No assignments found for this course.</p>
-</div>
-
-
-
-
-
-<div class="assignment-container">
-    <h2>Submit Your Assignment</h2>
-  
-    <form [formGroup]="assignmentForm" (ngSubmit)="submitAssignment()">
-      <!-- Select Course -->
-      <div class="form-group">
-        <label for="course">Course</label>
-        <input id="course" formControlName="course" type="text" placeholder="Enter Course ID or Name" />
-      </div>
-  
-      <!-- Select Due Date -->
-      <div class="form-group">
-        <label for="dueDate">Due Date</label>
-        <input id="dueDate" formControlName="dueDate" type="date" />
-      </div>
-  
-      <!-- Toggle between File Upload or Written -->
-      <div class="form-group">
-        <label>
-          <input type="checkbox" (change)="toggleUploadMode()" /> Upload File Instead of Writing
-        </label>
-      </div>
-  
-      <!-- If File Upload Mode -->
-      <div *ngIf="isFileUpload" class="form-group">
-        <label for="file">Select File</label>
-        <input id="file" type="file" (change)="onFileSelected($event)" />
-      </div>
-  
-      <!-- If Written Assignment Mode -->
-      <div *ngIf="!isFileUpload" class="form-group">
-        <label for="writtenAssignment">Write Assignment</label>
-        <textarea id="writtenAssignment" formControlName="writtenAssignment" rows="6" placeholder="Write your answer here..."></textarea>
-      </div>
-  
-      <!-- Submit Button -->
-      <button type="submit" [disabled]="assignmentForm.invalid && !isFileUpload">Submit Assignment</button>
-    </form>
-  </div>
-  

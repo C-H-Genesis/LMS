@@ -9,6 +9,7 @@
         <label for="password">Password</label>
         <input id="password" formControlName="password" type="password" required />
       </div>
+      <a routerLink="/forgot-password"><u>Forgot Password</u></a>
       <button type="submit">Login</button>
       <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
       <p>

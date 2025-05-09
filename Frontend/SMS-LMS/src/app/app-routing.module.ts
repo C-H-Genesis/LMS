@@ -18,11 +18,16 @@ import { GradesComponent } from './components/grades/grades.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { StudentAssignmentComponent } from './student-assignment/student-assignment.component';
 import { LearningDashboardComponent } from './components/learning-dashboard/learning-dashboard.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+
 
   // Admin Routes
   { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [roleGuard], data: { role: 'Admin' } },

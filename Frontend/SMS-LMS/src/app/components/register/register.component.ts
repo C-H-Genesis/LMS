@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RegisterRequest } from '../../DTOs/RegisterRequest';
 import { AuthService } from '../../auth/auth.service';
+import { Console } from 'node:console';
 
 
 
@@ -24,9 +25,9 @@ export class RegisterComponent implements OnInit {
   ) {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
       role: ['', Validators.required],
       fullName: ['', Validators.required],
+      email: ['', Validators.required]
     });
   }
 
@@ -37,11 +38,10 @@ export class RegisterComponent implements OnInit {
       const registerData: RegisterRequest = this.registerForm.value;
       this.authService.register(registerData).subscribe(
         () => {
-          alert (this.successMessage = 'Registration successful! Please log in.');
           this.router.navigate(['/login']);
         },
         () => {
-         alert(this.errorMessage = 'Registration failed. Please try again.');
+         console.log(this.errorMessage = 'Registration failed. Please try again.');
         }
       );
     }

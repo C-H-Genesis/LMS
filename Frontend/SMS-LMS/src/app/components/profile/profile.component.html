@@ -1,25 +1,62 @@
-<div>
-  <h2>Profile</h2>
-  <!-- Ensure form is displayed only after profile data is available -->
-  <form *ngIf="profile" (ngSubmit)="updateProfile()">
-    <label>Full Name:</label>
-    <input [(ngModel)]="profile.fullName" name="fullName" required /><br>
+<div class="profile-container" *ngIf="profile; else loading">
+  <!-- Personal Information Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Personal Information</h3>
+      <button class="edit-btn" (click)="editMode = !editMode">
+        {{ editMode ? 'Cancel' : 'Edit' }}
+      </button>
+    </div>
 
-    <label>Username:</label>
-    <input [(ngModel)]="profile.username" name="username" required /><br>
+    <form *ngIf="editMode" (ngSubmit)="updateProfile()" class="form-grid">
+      <div class="form-item">
+        <label>Full Name</label>
+        <input [(ngModel)]="profile.fullName" name="fullName" required />
+      </div>
+      <div class="form-item">
+        <label>Username</label>
+        <input [(ngModel)]="profile.username" name="username" required />
+      </div>
+      <div class="form-item">
+        <label>Reg Number</label>
+        <input [(ngModel)]="profile.regNumber" name="regNumber" required />
+      </div>
+      <div class="form-item">
+        <label>Email</label>
+        <input [(ngModel)]="profile.email" name="email" required />
+      </div>
+      <div class="form-item">
+        <label>Phone Number</label>
+        <input [(ngModel)]="profile.phoneNumber" name="phoneNumber" required />
+      </div>
+      <div class="form-item full-width">
+        <button type="submit" class="save-btn">Save</button>
+      </div>
+    </form>
 
-    <label>Reg Number:</label>
-    <input [(ngModel)]="profile.regNumber" name="regNumber" required /><br>
+    <div *ngIf="!editMode" class="info-grid">
+      <div><strong>Full Name:</strong> {{ profile.fullName }}</div>
+      <div><strong>Username:</strong> {{ profile.username }}</div>
+      <div><strong>Reg Number:</strong> {{ profile.regNumber }}</div>
+      <div><strong>Email:</strong> {{ profile.email }}</div>
+      <div><strong>Phone Number:</strong> {{ profile.phoneNumber }}</div>
+    </div>
+  </div>
 
-    <label>Email:</label>
-    <input [(ngModel)]="profile.email" name="email" required /><br>
-
-    <label>Phone Number:</label>
-    <input [(ngModel)]="profile.phoneNumber" name="phoneNumber" required /><br>
-
-    <button type="submit">Update Profile</button>
-  </form>
-
-  <!-- Show a loading message while data is being fetched -->
-  <p *ngIf="!profile">Loading profile data...</p>
+  <!-- Address Card -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Address</h3>
+      <button class="edit-btn">Edit</button>
+    </div>
+    <div class="info-grid">
+      <div><strong>Country:</strong> United Kingdom</div>
+      <div><strong>City:</strong> Leeds, East London</div>
+      <div><strong>Postal Code:</strong> ERT 1254</div>
+    </div>
+  </div>
 </div>
+
+<ng-template #loading>
+  <p>Loading profile data...</p>
+</ng-template>

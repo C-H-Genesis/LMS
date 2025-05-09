@@ -9,6 +9,7 @@ import { StudentService } from '../../services/student.service';
 })
 export class ProfileComponent implements OnInit {
   profile: any = null;
+  editMode = false;
 
   constructor(private studentService: StudentService) {}
 
@@ -36,6 +37,7 @@ export class ProfileComponent implements OnInit {
           console.log('Profile updated:', updatedProfile);
           this.profile = updatedProfile; // Update the local profile object
           alert('Profile updated');
+          this.editMode = false;
         },
         (error) => {
           console.error('Error updating profile:', error);
